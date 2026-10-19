@@ -1,0 +1,26 @@
+[package]
+name = "nixe-git"
+version = "0.1.0"
+description = "A native Git client for the Nixe Suite"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+nixe-core = { path = "../../crates/nixe-core" }
+nixe-theme = { path = "../../crates/nixe-theme" }
+nixe-ui = { path = "../../crates/nixe-ui" }
+gtk = { version = "0.11", package = "gtk4", features = ["v4_18"] }
+gix = { version = "0.85", default-features = false, features = ["sha1", "sha256"] }
+sourceview5 = "0.11"
+pangocairo = "0.22"
+serde_json = "1"
+tempfile = "3"
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+url = "2"
+libc = "0.2"

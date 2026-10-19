@@ -1,0 +1,99 @@
+/* Shared Nixe CSS owns the frame, typography, navigation and controls. */
+.git-window .toolbar { min-height: 46px; padding: 0 12px 0 14px; border-bottom: 1px solid @hairline; background: transparent; }
+.git-files { background: @theme_bg; }
+.git-files row { background: transparent; border-radius: 0; padding: 8px 14px; }
+.git-files row:hover { background: @row_hover; }
+.git-files row:selected { background: @nav_active; }
+.git-details { border-left: 1px solid @hairline; padding: 8px 12px; }
+.git-error { color: @theme_danger; }
+.git-notice { background: @theme_surface; border: 1px solid @hairline; border-radius: 10px; padding: 10px 10px 10px 16px; margin: 12px; }
+.git-notice.error { border-color: alpha(@theme_danger, 0.6); background: mix(@theme_surface, @theme_danger, 0.10); }
+.git-notice button { min-width: 24px; min-height: 24px; padding: 0; }
+.git-actions { padding: 6px 12px; border-bottom: 1px solid @hairline; }
+.git-actions flowboxchild { padding: 0; }
+.git-composer { padding: 12px; border-top: 1px solid @hairline; }
+.git-message, .git-message text, .git-diff, .git-diff text { background: @theme_bg; color: @theme_text; font-family: "JetBrains Mono", monospace; }
+.git-message { border: 1px solid @hairline; border-radius: 6px; }
+.git-diff border { background: @theme_bg; color: @theme_dim_text; }
+.git-history-search { padding: 6px 12px; border-bottom: 1px solid @hairline; }
+.git-history-search dropdown { min-width: 0; }
+.git-history-readout { color: @theme_dim_text; font-size: 0.86em; padding: 6px 12px; border-top: 1px solid @hairline; }
+.git-graph { background: @theme_bg; }
+.git-graph:focus { outline: 1px solid alpha(@theme_accent, 0.4); outline-offset: -1px; }
+.git-sidebar-section { border-top: 1px solid @hairline; padding-top: 6px; margin-top: 4px; }
+.git-sidebar-section > title { padding: 6px 4px; color: @theme_dim_text; }
+
+/* Repository tabs reuse the suite document-tab styling. */
+.git-tabs {
+  min-height: 40px;
+  padding: 0 8px 0 10px;
+  border-bottom: 1px solid @hairline;
+}
+
+.git-tabs .tabs {
+  padding: 0;
+}
+
+.doc-tab {
+  margin: 5px 0;
+  border-radius: 6px;
+  padding: 0 2px 0 0;
+  transition: background 150ms ease-out;
+}
+
+.doc-tab:hover {
+  background: @row_hover;
+}
+
+.doc-tab.active {
+  background: @nav_active;
+}
+
+window.git-window .doc-tab button.tab-main {
+  min-height: 28px;
+  padding: 0 4px 0 12px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: @theme_dim_text;
+}
+
+window.git-window .doc-tab.active button.tab-main {
+  color: @theme_text;
+}
+
+.doc-tab .tab-dirty {
+  color: @theme_accent;
+  font-weight: 800;
+}
+
+window.git-window .doc-tab button.tab-close {
+  min-width: 22px;
+  min-height: 22px;
+  padding: 0;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: @theme_dim_text;
+  opacity: 0;
+}
+
+window.git-window .doc-tab:hover button.tab-close,
+window.git-window .doc-tab.active button.tab-close {
+  opacity: 1;
+}
+
+window.git-window .doc-tab button.tab-close:hover {
+  background: @row_hover;
+  color: @theme_text;
+}
+
+window.git-window .doc-tab button.tab-close image {
+  -gtk-icon-size: 12px;
+}
+
+
+.git-commit-files { background: transparent; }
+.git-commit-files row { padding: 4px 6px; border-radius: 5px; }
+.git-commit-files row:hover { background: @row_hover; }
+.git-commit-files row:selected { background: @nav_active; color: @theme_text; }
