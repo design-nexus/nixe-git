@@ -1,0 +1,10 @@
+{
+  "application": "git",
+  "directory": "git",
+  "packages": [
+    "nixe-git"
+  ],
+  "manifest": "Cargo.toml",
+  "prepare": [],
+  "binaries": []
+}
