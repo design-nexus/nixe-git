@@ -18,6 +18,7 @@ done
 metadata=$(cd "$workspace" && cargo metadata --no-deps --format-version 1 --locked)
 target_dir=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["target_directory"])' <<< "$metadata")
 [[ ${NIXE_SKIP_BUILD:-0} == 1 ]] || (cd "$workspace" && cargo build --release --locked -p nixe-git)
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git -C "$workspace" log -1 --format=%ct)}"
 output="$target_dir/packages"
 mkdir -p "$output"
 staging=$(mktemp -d "$output/.nixe-git.XXXXXXXX")

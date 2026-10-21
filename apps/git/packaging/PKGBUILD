@@ -5,7 +5,7 @@ pkgver=0.1.0
 pkgrel=1
 pkgdesc='Native GTK Git client for the Nixe Suite'
 arch=('x86_64' 'aarch64')
-url='https://github.com/design-nexus/nixe'
+url='https://github.com/design-nexus/nixe-git'
 license=('MIT')
 depends=('gtk4>=4.18' 'gtksourceview5' 'git' 'glib2' 'glibc' 'gcc-libs' 'pango' 'cairo' 'graphene' 'libsecret')
 optdepends=('git-lfs: large-file storage controls' 'gnome-keyring: Secret Service provider credential storage' 'xdg-utils: open repositories in external applications')
