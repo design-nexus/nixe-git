@@ -1,4 +1,4 @@
-# Nixe Git implementation plan
+# Git implementation plan
 
 Native Linux Git client · Rust · GTK4 · Omarchy / Arch Linux
 

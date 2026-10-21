@@ -100,11 +100,11 @@ pub fn locked<T>(root: &Path, work: impl FnOnce() -> Result<T>) -> Result<T> {
             Err(std::fs::TryLockError::WouldBlock) => {
                 if let Some(control) = context().filter(|c| c.cancellable()) {
                     control.check()?;
-                    control.update("Waiting for another Nixe Git operation…");
+                    control.update("Waiting for another Git operation…");
                     thread::sleep(Duration::from_millis(50));
                 } else {
                     bail!(
-                        "Another Nixe Git process is changing this repository or one of its worktrees. Wait for it to finish, then retry."
+                        "Another Git process is changing this repository or one of its worktrees. Wait for it to finish, then retry."
                     );
                 }
             }

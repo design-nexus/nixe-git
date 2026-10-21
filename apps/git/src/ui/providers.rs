@@ -125,7 +125,7 @@ pub fn show() {
         let remove = gtk::Button::with_label("Disconnect…");
         let a = account.clone();
         let d = dialog.clone();
-        remove.connect_clicked(move |_|{d.close();let a=a.clone();confirm("Disconnect hosting account?","Remove this account from Nixe Git and delete its dedicated token from Secret Service, if any. Existing Git helper credentials and cloned repositories remain.","Disconnect",move||{let a=a.clone();nixe_core::cmd::background(move||credentials::delete(&a).map(|_|a.id),|result|match result{Ok(id)=>{prefs::update(|p|p.accounts.retain(|a|a.id!=id));show();},Err(e)=>fail(format!("{e:#}"))});});});
+        remove.connect_clicked(move |_|{d.close();let a=a.clone();confirm("Disconnect hosting account?","Remove this account from Git and delete its dedicated token from Secret Service, if any. Existing Git helper credentials and cloned repositories remain.","Disconnect",move||{let a=a.clone();nixe_core::cmd::background(move||credentials::delete(&a).map(|_|a.id),|result|match result{Ok(id)=>{prefs::update(|p|p.accounts.retain(|a|a.id!=id));show();},Err(e)=>fail(format!("{e:#}"))});});});
         actions.append(&remove);
         rows.append(&row(
             &format!("{} · {}", account.kind.name(), account.username),

@@ -1,4 +1,4 @@
-# Nixe Git
+# Git
 
 A native Rust + GTK4 Git client in the Nixe Suite. The foundation, core workflow,
 visual commit graph, advanced Git actions and conflict resolution are implemented.

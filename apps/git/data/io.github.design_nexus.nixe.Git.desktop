@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Nixe Git
+Name=Git
 Comment=Explore commit history and manage Git repositories
 Exec=nixe-git %f
 Icon=io.github.design_nexus.nixe.Git

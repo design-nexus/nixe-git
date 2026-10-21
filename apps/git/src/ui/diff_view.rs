@@ -202,7 +202,7 @@ fn scheme(palette: &nixe_theme::Palette) -> Option<sourceview5::StyleScheme> {
         );
         let xml = format!(
             r#"<?xml version="1.0" encoding="UTF-8"?>
-<style-scheme id="nixe-git-diff" name="Nixe Git" version="1.0">
+<style-scheme id="nixe-git-diff" name="Git" version="1.0">
 <style name="text" foreground="{text}" background="{bg}"/>
 <style name="line-numbers" foreground="{dim}" background="{bg}"/>
 <style name="current-line-number" foreground="{accent}" background="{bg}"/>

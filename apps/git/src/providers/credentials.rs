@@ -27,7 +27,7 @@ fn tool(account: &Account, verb: &str) -> Command {
     let mut command = Command::new("secret-tool");
     command.arg(verb);
     if verb == "store" {
-        command.arg("--label=Nixe Git hosting account");
+        command.arg("--label=Git hosting account");
     }
     command.args(["application", "nixe-git", "account", &account.id, "instance", &account.base_url]);
     command.stderr(Stdio::null());
