@@ -17,7 +17,7 @@ done
 # Ask Cargo for its output directory, including configured CARGO_TARGET_DIR overrides.
 metadata=$(cd "$workspace" && cargo metadata --no-deps --format-version 1 --locked)
 target_dir=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["target_directory"])' <<< "$metadata")
-(cd "$workspace" && cargo build --release --locked -p nixe-git)
+[[ ${NIXE_SKIP_BUILD:-0} == 1 ]] || (cd "$workspace" && cargo build --release --locked -p nixe-git)
 output="$target_dir/packages"
 mkdir -p "$output"
 staging=$(mktemp -d "$output/.nixe-git.XXXXXXXX")
