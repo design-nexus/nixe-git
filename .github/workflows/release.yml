@@ -28,7 +28,10 @@ jobs:
           source <(sed -n '/^app_info()/,/^}/p' install.sh)
           app_info git
           bash tools/ci-bootstrap.sh $deps
-      - run: python3 tools/ci.py
+      - run: |
+          useradd -m nixe-build
+          chown -R nixe-build:nixe-build "$GITHUB_WORKSPACE"
+          runuser -u nixe-build -- python3 tools/ci.py
       - run: python3 tools/release.py --tag "$RELEASE_TAG" --publish
         env:
           RELEASE_TAG: ${{ inputs.tag }}

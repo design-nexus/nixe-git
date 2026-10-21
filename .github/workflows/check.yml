@@ -26,4 +26,7 @@ jobs:
           app_info git
           bash tools/ci-bootstrap.sh $deps
       - name: Locked build, targeted tests and package
-        run: python3 tools/ci.py
+        run: |
+          useradd -m nixe-build
+          chown -R nixe-build:nixe-build "$GITHUB_WORKSPACE"
+          runuser -u nixe-build -- python3 tools/ci.py
