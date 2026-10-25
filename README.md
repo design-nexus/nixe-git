@@ -9,10 +9,10 @@ Release polish remains on the roadmap in [PLAN.md](PLAN.md).
 # Arch dependencies: gtk4 gtksourceview5 libsecret git git-lfs pkgconf gcc rust
 cargo run -p nixe-git -- /path/to/repository [/path/to/another]
 cargo test -p nixe-git
-./install.sh git  # From the Nixe repository root
+./install.sh  # From a checkout of this repository
 ```
 
-For a pacman-managed Arch installation, run from the Nixe checkout:
+For a pacman-managed Arch installation, run from a checkout of this repository:
 
 ```sh
 # Requires base-devel, rust, python and desktop-file-utils, plus runtime dependencies.
@@ -28,7 +28,7 @@ Git LFS and a Secret Service provider are optional runtime dependencies. Existin
 user-local launcher/icon/binary copies are backed up under
 `$XDG_STATE_HOME/nixe-git/package-backups` (default `~/.local/state`) after a
 successful package installation; a local binary symlink keeps `nixe list` working.
-Rebuild with the same helper for updates, or use `./install.sh git` from this
+Rebuild with the same helper for updates, or use `./install.sh` from this
 checkout. A downloaded suite installer directs package users to the checkout.
 Remove with `./uninstall.sh git` or `sudo pacman -R nixe-git`; preferences and
 repository data are retained unless the suite uninstaller's `--purge` is requested.
@@ -281,3 +281,10 @@ The local synthetic benchmark is reproducible without touching user repositories
 Its first 128 rows took about 396 ms and all 100,000 layouts took 792 ms on this
 machine, with cached viewport reads averaging 0.067 ms. This measures the data and
 layout pipeline; it does not measure GUI frame rate.
+
+## Install
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/design-nexus/nixe-git/main/install.sh | bash
+```
+
