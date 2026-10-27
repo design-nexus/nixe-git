@@ -1,15 +1,15 @@
 use super::{window::current, workflow::confirm};
 use gtk::prelude::*;
-use nixe_git::core::{
+use nyx_git::core::{
     lfs::{self, Action},
     operations::Operation,
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::rc::Rc;
 
 pub fn show() {
     let Some(root) = current().and_then(|ui| ui.root()) else { return };
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || lfs::read(&root),
         move |result| {
             let Some(ui) = current() else { return };

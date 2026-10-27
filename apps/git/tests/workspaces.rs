@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     advanced::Guard,
     workspace::Workspace,
     worktrees::{self, Action, State},
@@ -79,7 +79,7 @@ fn create_existing_and_new_branches_lock_and_remove_safely() {
     let w = worktrees::list(&root).unwrap().into_iter().find(|w| w.path == existing).unwrap();
     let guard = worktrees::removal_guard(&root, &w).unwrap();
     worktrees::run(&root, Action::Remove { expected: w, guard: Box::new(guard) }).unwrap();
-    assert!(nixe_git::core::advanced::recovery(&root).unwrap().iter().any(|r| r.id == detached));
+    assert!(nyx_git::core::advanced::recovery(&root).unwrap().iter().any(|r| r.id == detached));
 }
 #[test]
 fn dirty_ignored_stale_guard_and_branch_move_are_rejected() {
@@ -165,7 +165,7 @@ fn nul_paths_and_workspace_session_roundtrip() {
     assert_eq!(w.next(true), Some(b.clone()));
     let e = w.entry(&a);
     e.favorite = true;
-    e.group = "Nixe".into();
+    e.group = "Nyx".into();
     e.message = "unfinished commit\nbody".into();
     e.details_position = 700;
     e.narrow_position = 350;

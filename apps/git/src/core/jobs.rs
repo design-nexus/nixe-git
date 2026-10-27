@@ -91,9 +91,9 @@ pub fn locked<T>(root: &Path, work: impl FnOnce() -> Result<T>) -> Result<T> {
         .write(true)
         .mode(0o600)
         .custom_flags(libc::O_NOFOLLOW)
-        .open(key.join("nixe-operation.lock"))
-        .context("Could not open the Nixe operation lock")?;
-    ensure!(file.metadata()?.is_file(), "The Nixe operation lock is not a regular file");
+        .open(key.join("nyx-operation.lock"))
+        .context("Could not open the Nyx operation lock")?;
+    ensure!(file.metadata()?.is_file(), "The Nyx operation lock is not a regular file");
     loop {
         match file.try_lock() {
             Ok(()) => break,

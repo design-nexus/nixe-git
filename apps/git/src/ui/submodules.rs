@@ -1,18 +1,18 @@
 use super::{window::current, workflow::confirm};
 use gtk::prelude::*;
-use nixe_git::core::{
+use nyx_git::core::{
     operations::Operation,
     remotes,
     submodules::{self, Action, State},
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::rc::Rc;
 fn display_url(value: &str) -> String {
     if value.starts_with("../") || value.starts_with("./") { value.into() } else { remotes::display_url(value) }
 }
 pub fn show() {
     let Some(root) = current().and_then(|ui| ui.root()) else { return };
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || submodules::read(&root),
         move |result| {
             let Some(ui) = current() else { return };
@@ -101,7 +101,7 @@ pub fn show() {
                 let snapshot = (*s).clone();
                 let index = c.selected() as usize;
                 let d = d.clone();
-                nixe_core::cmd::background(
+                nyx_core::cmd::background(
                     move || submodules::open_path(&snapshot, index).map(|path| (snapshot.root, path)),
                     move |result| match result {
                         Ok((root, path)) => {

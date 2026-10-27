@@ -1,6 +1,6 @@
 use super::window::{Ui, current};
 use gtk::{gio, prelude::*};
-use nixe_git::core::repository::Snapshot;
+use nyx_git::core::repository::Snapshot;
 use std::{
     cell::{Cell, RefCell},
     path::PathBuf,
@@ -51,7 +51,7 @@ impl Monitor {
                             return;
                         }
                         let paths = [file.path(), other.and_then(|f| f.path())];
-                        if paths.iter().flatten().all(|p| p.file_name().is_some_and(|n| n == "nixe-operation.lock")) {
+                        if paths.iter().flatten().all(|p| p.file_name().is_some_and(|n| n == "nyx-operation.lock")) {
                             return;
                         }
                         if matches!(

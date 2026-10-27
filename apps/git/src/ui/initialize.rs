@@ -1,10 +1,10 @@
 use super::window::current;
 use gtk::{gio, prelude::*};
-use nixe_git::core::{
+use nyx_git::core::{
     jobs,
     operations::{self, Operation},
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::path::PathBuf;
 
 pub fn show() {
@@ -80,7 +80,7 @@ pub fn show() {
         status.set_text("Initializing repository…");
         let (d, status, button) = (d.clone(), status.clone(), button.clone());
         let weak = std::rc::Rc::downgrade(&ui);
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || jobs::controlled(control, || operations::run(&destination, operation)).map(|_| destination),
             move |result| {
                 let Some(ui) = weak.upgrade() else { return };

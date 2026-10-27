@@ -1,7 +1,7 @@
 use super::window::{SHORTCUTS, current};
 use crate::prefs;
 use gtk::prelude::*;
-use nixe_ui::{settings_card, widgets};
+use nyx_ui::{settings_card, widgets};
 
 pub fn open() {
     let Some(ui) = current() else { return };
@@ -34,16 +34,16 @@ fn build() -> (gtk::Widget, gtk::Box) {
     let rows = group(&body, "Git window");
     rows.append(&widgets::start_row());
     let p = prefs::get();
-    let options = nixe_theme::all().iter().map(|t| (t.id.clone(), t.name.clone())).collect();
-    let (row, dropdown) = widgets::choice_row("Theme", "Choose the colors used across Nixe apps.", options, &p.theme, |id| {
+    let options = nyx_theme::all().iter().map(|t| (t.id.clone(), t.name.clone())).collect();
+    let (row, dropdown) = widgets::choice_row("Theme", "Choose the colors used across Nyx apps.", options, &p.theme, |id| {
         prefs::update(|p| {
             p.theme = id;
             p.mode = prefs::ThemeMode::Theme;
         });
-        nixe_theme::apply();
+        nyx_theme::apply();
     });
-    dropdown.set_sensitive(p.mode == prefs::ThemeMode::Theme || !nixe_theme::omarchy_available());
-    if nixe_theme::omarchy_available() {
+    dropdown.set_sensitive(p.mode == prefs::ThemeMode::Theme || !nyx_theme::omarchy_available());
+    if nyx_theme::omarchy_available() {
         let (follow, _) = widgets::switch_row(
             "Follow Omarchy theme",
             "Update colors live when the desktop theme changes.",
@@ -51,7 +51,7 @@ fn build() -> (gtk::Widget, gtk::Box) {
             move |on| {
                 prefs::update(|p| p.mode = if on { prefs::ThemeMode::Omarchy } else { prefs::ThemeMode::Theme });
                 dropdown.set_sensitive(!on);
-                nixe_theme::apply();
+                nyx_theme::apply();
             },
         );
         rows.append(&follow);
@@ -62,7 +62,7 @@ fn build() -> (gtk::Widget, gtk::Box) {
         while let Some(child) = colors.first_child() {
             colors.remove(&child);
         }
-        let palette = nixe_theme::palette();
+        let palette = nyx_theme::palette();
         for color in [&palette.bg, &palette.surface, &palette.muted, &palette.text, &palette.accent, &palette.danger] {
             let swatch = gtk::Box::new(gtk::Orientation::Horizontal, 0);
             swatch.add_css_class("swatch");
@@ -73,7 +73,7 @@ fn build() -> (gtk::Widget, gtk::Box) {
     };
     refresh(&colors);
     let weak = colors.downgrade();
-    nixe_theme::subscribe(&colors, move || {
+    nyx_theme::subscribe(&colors, move || {
         if let Some(colors) = weak.upgrade() {
             refresh(&colors);
         }
@@ -81,12 +81,12 @@ fn build() -> (gtk::Widget, gtk::Box) {
     rows.append(&widgets::row("Current colors", "", Some(colors.upcast_ref())));
     let (row, _) = widgets::switch_row("Glow", "Use the shared theme's glow preference.", p.glow, |on| {
         prefs::update(|p| p.glow = on);
-        nixe_theme::apply();
+        nyx_theme::apply();
     });
     rows.append(&row);
     let (row, _) = widgets::switch_row("Reduce motion", "Turn off interface animations.", p.reduce_motion, |on| {
         prefs::update(|p| p.reduce_motion = on);
-        nixe_theme::apply();
+        nyx_theme::apply();
     });
     rows.append(&row);
     let (row, _) = widgets::switch_row(

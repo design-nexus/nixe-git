@@ -1,7 +1,7 @@
 use super::{window::current, workflow::confirm};
 use gtk::prelude::*;
-use nixe_git::core::operations::{self, Operation};
-use nixe_ui::widgets;
+use nyx_git::core::operations::{self, Operation};
+use nyx_ui::widgets;
 use std::{path::PathBuf, rc::Rc};
 
 fn run(root: &std::path::Path, operation: Operation) {
@@ -31,7 +31,7 @@ pub fn branches() {
     let Some(ui) = current() else { return };
     let Some(root) = ui.root() else { return };
     let branch = ui.snapshot.borrow().as_ref().map(|s| s.repository.branch.clone()).unwrap_or_default();
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || operations::run(&root, Operation::Branches).map(|bytes| (root, bytes)),
         move |result| {
             let (root, bytes) = match result {
@@ -131,7 +131,7 @@ pub fn branches() {
 pub fn stashes() {
     let Some(ui) = current() else { return };
     let Some(root) = ui.root() else { return };
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || operations::run(&root, Operation::Stashes).map(|bytes| (root, bytes)),
         move |result| {
             let (root, bytes) = match result {
@@ -206,7 +206,7 @@ pub fn stashes() {
     );
 }
 pub(super) fn show_stash_diff(root: PathBuf, hash: String) {
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || operations::run(&root, Operation::StashDiff(hash)),
         |result| match result {
             Ok(bytes) => {
@@ -232,7 +232,7 @@ pub(super) fn show_stash_diff(root: PathBuf, hash: String) {
 }
 
 pub fn push_branch(root: PathBuf, branch: String) {
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || operations::run(&root, Operation::Remotes).map(|bytes| (root, bytes)),
         move |result| {
             let (root, bytes) = match result {

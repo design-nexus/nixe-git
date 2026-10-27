@@ -49,7 +49,7 @@ impl DiffView {
         me
     }
     pub fn recolor(&self) {
-        let palette = nixe_theme::palette();
+        let palette = nyx_theme::palette();
         if let Some(scheme) = scheme(&palette) {
             self.buffer.set_style_scheme(Some(&scheme));
         }
@@ -176,16 +176,16 @@ fn annotate(text: &str) -> (Vec<Option<&'static str>>, Vec<String>) {
 
 // GtkSourceView paints its gutter from a style scheme, independently of GTK CSS.
 // Cache a scheme generated from the same semantic palette as the window.
-fn scheme(palette: &nixe_theme::Palette) -> Option<sourceview5::StyleScheme> {
+fn scheme(palette: &nyx_theme::Palette) -> Option<sourceview5::StyleScheme> {
     use std::cell::RefCell;
-    thread_local! {static LAST: RefCell<Option<(nixe_theme::Palette, sourceview5::StyleScheme)>> = const {RefCell::new(None)};}
+    thread_local! {static LAST: RefCell<Option<(nyx_theme::Palette, sourceview5::StyleScheme)>> = const {RefCell::new(None)};}
     LAST.with(|last| {
         if let Some((old, scheme)) = last.borrow().as_ref()
             && old == palette
         {
             return Some(scheme.clone());
         }
-        let directory = nixe_core::paths::cache_dir().join("sourceview");
+        let directory = nyx_core::paths::cache_dir().join("sourceview");
         std::fs::create_dir_all(&directory).ok()?;
         let bg = gtk::glib::markup_escape_text(&palette.bg);
         let text = gtk::glib::markup_escape_text(&palette.text);
@@ -202,7 +202,7 @@ fn scheme(palette: &nixe_theme::Palette) -> Option<sourceview5::StyleScheme> {
         );
         let xml = format!(
             r#"<?xml version="1.0" encoding="UTF-8"?>
-<style-scheme id="nixe-git-diff" name="Git" version="1.0">
+<style-scheme id="nyx-git-diff" name="Git" version="1.0">
 <style name="text" foreground="{text}" background="{bg}"/>
 <style name="line-numbers" foreground="{dim}" background="{bg}"/>
 <style name="current-line-number" foreground="{accent}" background="{bg}"/>
@@ -211,11 +211,11 @@ fn scheme(palette: &nixe_theme::Palette) -> Option<sourceview5::StyleScheme> {
 <style name="cursor" foreground="{accent}"/>
 </style-scheme>"#
         );
-        nixe_core::cmd::atomic_write(&directory.join("nixe-git-diff.xml"), &xml).ok()?;
+        nyx_core::cmd::atomic_write(&directory.join("nyx-git-diff.xml"), &xml).ok()?;
         let manager = sourceview5::StyleSchemeManager::new();
         manager.append_search_path(&directory.to_string_lossy());
         manager.force_rescan();
-        let scheme = manager.scheme("nixe-git-diff")?;
+        let scheme = manager.scheme("nyx-git-diff")?;
         *last.borrow_mut() = Some((palette.clone(), scheme.clone()));
         Some(scheme)
     })

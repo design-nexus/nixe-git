@@ -6,7 +6,7 @@ members = ["apps/git"]
 edition = "2024"
 license = "MIT"
 authors = ["Ken Smith"]
-repository = "https://github.com/design-nexus/nixe-git"
+repository = "https://github.com/design-nexus/nyx-git"
 
 [profile.release]
 lto = "thin"

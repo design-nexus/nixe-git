@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     advanced,
     operations::{self, Operation},
     submodules::{self, Action, State},
@@ -75,7 +75,7 @@ fn indexed_checkout_retains_previous_child_tip_and_supports_cached_initializatio
     assert_eq!(git(&parent, &["rev-parse", "HEAD"]), parent_head);
     assert_eq!(git(&other, &["rev-parse", "HEAD"]), old);
     assert_eq!(fs::read_to_string(other.join("file")).unwrap(), "preserve other submodule\n");
-    assert!(advanced::recovery(&child).unwrap().iter().any(|r| r.id == old && r.label.starts_with("refs/nixe/recovery/")));
+    assert!(advanced::recovery(&child).unwrap().iter().any(|r| r.id == old && r.label.starts_with("refs/nyx/recovery/")));
     git(&parent, &["commit", "-m", "Record indexed submodule commits"]);
     git(&parent, &["--literal-pathspecs", "submodule", "deinit", "--", PATH]);
     let snapshot = submodules::read(&parent).unwrap();

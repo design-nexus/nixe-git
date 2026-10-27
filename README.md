@@ -1,14 +1,14 @@
 # Git
 
-A native Rust + GTK4 Git client in the Nixe Suite. The foundation, core workflow,
+A native Rust + GTK4 Git client in the Nyx Suite. The foundation, core workflow,
 visual commit graph, advanced Git actions and conflict resolution are implemented.
 Worktree management, repository workspaces and optional hosting workflows are implemented.
 Release polish remains on the roadmap in [PLAN.md](PLAN.md).
 
 ```sh
 # Arch dependencies: gtk4 gtksourceview5 libsecret git git-lfs pkgconf gcc rust
-cargo run -p nixe-git -- /path/to/repository [/path/to/another]
-cargo test -p nixe-git
+cargo run -p nyx-git -- /path/to/repository [/path/to/another]
+cargo test -p nyx-git
 ./install.sh  # From a checkout of this repository
 ```
 
@@ -16,7 +16,7 @@ For a pacman-managed Arch installation, run from a checkout of this repository:
 
 ```sh
 # Requires base-devel, rust, python and desktop-file-utils, plus runtime dependencies.
-apps/git/packaging/build.sh            # Build target/packages/nixe-git-*.pkg.tar.zst
+apps/git/packaging/build.sh            # Build target/packages/nyx-git-*.pkg.tar.zst
 apps/git/packaging/build.sh --install  # Build and install through pacman
 ```
 
@@ -26,11 +26,11 @@ It is a local package recipe, not an AUR recipe or a published source release.
 The generated PKGBUILD and input checksums are installed with the documentation.
 Git LFS and a Secret Service provider are optional runtime dependencies. Existing
 user-local launcher/icon/binary copies are backed up under
-`$XDG_STATE_HOME/nixe-git/package-backups` (default `~/.local/state`) after a
-successful package installation; a local binary symlink keeps `nixe list` working.
+`$XDG_STATE_HOME/nyx-git/package-backups` (default `~/.local/state`) after a
+successful package installation; a local binary symlink keeps `nyx list` working.
 Rebuild with the same helper for updates, or use `./install.sh` from this
 checkout. A downloaded suite installer directs package users to the checkout.
-Remove with `./uninstall.sh git` or `sudo pacman -R nixe-git`; preferences and
+Remove with `./uninstall.sh git` or `sudo pacman -R nyx-git`; preferences and
 repository data are retained unless the suite uninstaller's `--purge` is requested.
 After direct pacman removal the local symlink can be removed separately.
 
@@ -119,7 +119,7 @@ Changes reject stale configuration/tracking refs; removal retains tracking tips 
 Recovery. Inherited/included configuration, multivalue URL edits and removal of
 mirror/custom fetch mappings require Git. These settings do not contact the server.
 **Server branches…** explicitly contacts the selected remote’s push destination.
-Choose a branch and confirm deletion: Nixe fetches its tip into local Recovery and
+Choose a branch and confirm deletion: Nyx fetches its tip into local Recovery and
 deletes only with an exact-tip force-with-lease. Concurrent changes are refused.
 The advertised default branch is protected; deletion is unavailable if the server
 does not identify it, or if multiple push destinations are configured. Server hooks
@@ -154,7 +154,7 @@ configuration. Native Git handles credentials and transport policy. Updates can
 detach HEAD; a previous initialized tip is retained in the child’s **Recovery**.
 Updates refuse dirty submodules, ignored contents, nonempty uninitialized
 directories, conflicts, symlink paths and stale repository/configuration state.
-Parent and initialized-child mutation locks coordinate Nixe operations. No forced,
+Parent and initialized-child mutation locks coordinate Nyx operations. No forced,
 recursive, remote-tip, add/remove or deinit actions are provided here; open a child
 to manage its nested modules. More than 256 direct modules require Git. Partial
 initializations remain for inspection after failure; these operations do not expose
@@ -166,7 +166,7 @@ soft/mixed/hard reset, annotated tags and deletion of unmerged local branches.
 Interactive rebase supports reordering, pick, squash, fixup and drop for linear
 ranges of up to 500 commits. Squash after a selected base creates one commit;
 a failed commit restores the original HEAD. History-changing operations retain
-`refs/nixe/recovery/…` points. **Recovery points…** lists these and the HEAD reflog, and
+`refs/nyx/recovery/…` points. **Recovery points…** lists these and the HEAD reflog, and
 creates a branch without touching working files. Recovery references retain
 committed history, not discarded uncommitted contents.
 
@@ -188,7 +188,7 @@ choices. Regular text/binary files up to 16 MiB are supported; symlink, submodul
 and larger conflicts require an external tool. Continue uses Git's prepared
 message; abort warns that resolution edits can be lost. Refresh external changes
 with F5 before choosing conflicts. Forced cancellation of mutation commands remains
-intentionally unavailable. Nixe coordinates its processes through common-directory locks.
+intentionally unavailable. Nyx coordinates its processes through common-directory locks.
 
 The tab strip opens multiple repositories in one window. Ctrl+Tab / Ctrl+Shift+Tab
 switch tabs; Ctrl+W or a tab's close button closes a tab without changing its files.
@@ -247,24 +247,24 @@ persist. The suite's **Open on** setting controls last-repository restoration.
 
 Short notices fade after a few seconds; errors stay until dismissed with Esc or ×.
 
-Nixe Assistant can work Git over the suite's control interface (`repo.open`,
+Nyx Assistant can work Git over the suite's control interface (`repo.open`,
 `repo.status`, `repo.log`, `repo.fetch`). Nothing it offers commits, pushes, discards
 or rewrites history.
 
 Themes, live Omarchy synchronization, user palettes, settings cards and widgets use
-`nixe-core`, `nixe-theme` and `nixe-ui`. Preferences live in
-`$XDG_CONFIG_HOME/nixe-git/settings.toml`. Set `RUST_LOG=nixe_git=debug` for operation
+`nyx-core`, `nyx-theme` and `nyx-ui`. Preferences live in
+`$XDG_CONFIG_HOME/nyx-git/settings.toml`. Set `RUST_LOG=nyx_git=debug` for operation
 timing logs.
 
 **Operation history…** (repository menu) shows live progress and the last
 100 job results for this session. Fetch, clone and LFS fetch offer **Stop**; stopping interrupts
 Git and its transport children, retains partial results, and refreshes repository
 state. Failed fetches can be retried explicitly. Other repository mutations finish
-under their locks; they do not offer forced cancellation. Nixe refuses ordinary quit
+under their locks; they do not offer forced cancellation. Nyx refuses ordinary quit
 while jobs remain active. Background completions use desktop notifications.
 
 You can switch tabs or use another repository while a job runs. Related worktrees
-share a common-directory lock across Nixe processes. Fetch can wait for that lock;
+share a common-directory lock across Nyx processes. Fetch can wait for that lock;
 other conflicting mutations are refused. Completing a job preserves its original
 repository context and the active tab's draft. No mutation is retried automatically.
 
@@ -277,7 +277,7 @@ cancellation, complete accessibility/high-DPI acceptance, fresh performance numb
 and release packaging remain follow-up work; see PLAN.md for release limits.
 
 The local synthetic benchmark is reproducible without touching user repositories:
-`cargo run --release -p nixe-git --example graph_benchmark -- 100000`.
+`cargo run --release -p nyx-git --example graph_benchmark -- 100000`.
 Its first 128 rows took about 396 ms and all 100,000 layouts took 792 ms on this
 machine, with cached viewport reads averaging 0.067 ms. This measures the data and
 layout pipeline; it does not measure GUI frame rate.
@@ -285,6 +285,6 @@ layout pipeline; it does not measure GUI frame rate.
 ## Install
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/design-nexus/nixe-git/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/design-nexus/nyx-git/main/install.sh | bash
 ```
 

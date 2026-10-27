@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     operations::{self, Operation},
     repository,
 };
@@ -25,7 +25,7 @@ fn run(path: &Path, args: &[&str]) {
 fn fixture() -> TempDir {
     let dir = tempfile::tempdir().unwrap();
     run(dir.path(), &["init", "--initial-branch=main"]);
-    run(dir.path(), &["config", "user.name", "Nixe Test"]);
+    run(dir.path(), &["config", "user.name", "Nyx Test"]);
     run(dir.path(), &["config", "user.email", "test@example.invalid"]);
     run(dir.path(), &["config", "commit.gpgsign", "false"]);
     run(dir.path(), &["config", "core.hooksPath", "/dev/null"]);
@@ -77,7 +77,7 @@ fn linked_worktrees_bare_repositories_and_bounded_discovery() {
     let repo = parent.path().join("repo");
     fs::create_dir(&repo).unwrap();
     run(&repo, &["init", "--initial-branch=main"]);
-    run(&repo, &["config", "user.name", "Nixe Test"]);
+    run(&repo, &["config", "user.name", "Nyx Test"]);
     run(&repo, &["config", "user.email", "test@example.invalid"]);
     run(&repo, &["-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null", "commit", "--allow-empty", "-m", "Root"]);
     let worktree = parent.path().join("parallel");
@@ -163,7 +163,7 @@ fn mutations_commit_and_unstage_preserve_working_files() {
 }
 #[test]
 fn stages_selected_lines_and_hunks_and_rejects_stale_patches() {
-    use nixe_git::core::staging;
+    use nyx_git::core::staging;
     let dir = fixture();
     let root = dir.path();
     let original: String = (1..=40).map(|i| format!("line {i}\n")).collect();

@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     advanced::Guard,
     hosting::{self, Checkout},
     operations::{self, Operation},

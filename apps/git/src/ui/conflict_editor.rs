@@ -1,10 +1,10 @@
 use super::{diff_view::DiffView, window::current, workflow::confirm};
 use gtk::prelude::*;
-use nixe_git::core::{
+use nyx_git::core::{
     conflicts::{self, Conflict, Resolution},
     operations::Operation,
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::{path::PathBuf, rc::Rc};
 fn error(message: &str) {
     if let Some(ui) = current() {
@@ -37,7 +37,7 @@ pub fn choose() {
 }
 pub fn open(file: PathBuf) {
     let Some(root) = current().and_then(|ui| ui.root()) else { return };
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || conflicts::load(&root, &file),
         move |result| match result {
             Ok(conflict) => editor(conflict),
@@ -229,7 +229,7 @@ fn editor(conflict: Conflict) {
     result.buffer.set_text(&initial);
     let weak_source = Rc::downgrade(&source);
     let weak_result = Rc::downgrade(&result);
-    nixe_theme::subscribe(&dialog, move || {
+    nyx_theme::subscribe(&dialog, move || {
         if let Some(view) = weak_source.upgrade() {
             view.recolor();
         }

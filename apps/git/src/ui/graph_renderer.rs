@@ -1,5 +1,5 @@
 use gtk::{cairo, gdk, pango, prelude::*};
-use nixe_git::graph::model::{Query, RefKind, Row};
+use nyx_git::graph::model::{Query, RefKind, Row};
 pub fn row_height(zoom: f64) -> f64 {
     36.0 * zoom
 }
@@ -76,7 +76,7 @@ pub struct Frame<'a> {
     pub comparison: Option<&'a str>,
 }
 pub fn draw(area: &gtk::DrawingArea, cr: &cairo::Context, width: f64, height: f64, frame: Frame<'_>) {
-    let palette = nixe_theme::palette();
+    let palette = nyx_theme::palette();
     let bg = color(&palette.bg);
     let accent = color(&palette.accent);
     let danger = color(&palette.danger);

@@ -1,4 +1,4 @@
-use nixe_git::{
+use nyx_git::{
     core::{
         history::{Cursor, Event, Request, Scope, Session},
         operations::{self, Operation},
@@ -48,7 +48,7 @@ fn node(id: &str, parents: &[&str]) -> Commit {
         id: id.into(),
         parents: parents.iter().map(|s| s.to_string()).collect(),
         subject: id.into(),
-        author: "Nixe".into(),
+        author: "Nyx".into(),
         email: "test@example.invalid".into(),
         timestamp: 1700000000,
         refs: Vec::new(),
@@ -86,7 +86,7 @@ fn real_skewed_merge_history_labels_details_and_shallow_boundaries() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();
     git(root, &["init", "--initial-branch=main"]);
-    git(root, &["config", "user.name", "Nixe Test"]);
+    git(root, &["config", "user.name", "Nyx Test"]);
     git(root, &["config", "user.email", "test@example.invalid"]);
     git(root, &["config", "commit.gpgsign", "false"]);
     git(root, &["config", "core.hooksPath", "/dev/null"]);
@@ -125,7 +125,7 @@ fn real_skewed_merge_history_labels_details_and_shallow_boundaries() {
             assert!(index[parent] > i, "Parents must always follow their children");
         }
     }
-    let details = nixe_git::core::history::details(root, &head).unwrap();
+    let details = nyx_git::core::history::details(root, &head).unwrap();
     assert_eq!(details.parents.len(), 2);
     let files =
         operations::run(root, Operation::CommitFiles { id: head.clone(), parent: details.parents.first().cloned() }).unwrap();
@@ -147,7 +147,7 @@ fn real_skewed_merge_history_labels_details_and_shallow_boundaries() {
 #[test]
 fn query_filters_and_actor_cancellation_remain_bounded() {
     let c = node("fix", &[]);
-    assert!(Query::parse("fix author:nixe after:2020-01-01 before:2030-01-01").unwrap().matches(&c));
+    assert!(Query::parse("fix author:nyx after:2020-01-01 before:2030-01-01").unwrap().matches(&c));
     assert!(!Query::parse("author:someone").unwrap().matches(&c));
     assert!(Query::parse("after:invalid-date").is_err());
     let dir = tempfile::tempdir().unwrap();

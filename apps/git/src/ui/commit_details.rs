@@ -1,10 +1,10 @@
 use super::{diff_view::DiffView, window::current};
 use gtk::{glib, prelude::*};
-use nixe_git::core::{
+use nyx_git::core::{
     history::{self, Details},
     operations::{self, Operation},
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::{
     cell::{Cell, RefCell},
     ffi::OsString,
@@ -134,7 +134,7 @@ impl CommitDetails {
         let Some(ui) = current() else { return };
         let Some(root) = ui.root() else { return };
         self.metadata.set_text("Loading commit…");
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || -> anyhow::Result<_> {
                 let data = history::details(&root, &id)?;
                 let repo = gix::discover(&root)?;
@@ -218,7 +218,7 @@ impl CommitDetails {
             return;
         };
         self.diff.set_text("Loading diff…");
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || {
                 operations::run(&root, Operation::CommitDiff { id: data.id, parent: data.parents.first().cloned(), file: path })
                     .map(|bytes| (root, bytes))
@@ -244,7 +244,7 @@ impl CommitDetails {
         self.diff.set_text("Loading comparison…");
         let Some(ui) = current() else { return };
         let Some(root) = ui.root() else { return };
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || operations::run(&root, Operation::Compare { base, tip }).map(|bytes| (root, bytes)),
             move |result| {
                 let Some(ui) = current() else { return };

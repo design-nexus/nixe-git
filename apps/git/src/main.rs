@@ -5,28 +5,28 @@ mod theme;
 mod ui;
 use gtk::{gio, glib, prelude::*};
 fn main() -> glib::ExitCode {
-    if let Some(code) = nixe_git::core::advanced::sequence_editor() {
+    if let Some(code) = nyx_git::core::advanced::sequence_editor() {
         return glib::ExitCode::from(code as u8);
     }
-    nixe_core::app::init(nixe_core::app::App { slug: "nixe-git", name: "Git" });
+    nyx_core::app::init(nyx_core::app::App { slug: "nyx-git", name: "Git" });
     tracing_subscriber::fmt()
-        .with_env_filter(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "nixe_git=info".into()))
+        .with_env_filter(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "nyx_git=info".into()))
         .init();
     if std::env::args_os().any(|a| a == "--help" || a == "-h") {
-        println!("Usage: nixe-git [REPOSITORY…]\nOpen a repository, a linked worktree, or a folder inside one.");
+        println!("Usage: nyx-git [REPOSITORY…]\nOpen a repository, a linked worktree, or a folder inside one.");
         return glib::ExitCode::SUCCESS;
     }
     let application = gtk::Application::builder()
-        .application_id(if std::env::var_os("NIXE_GIT_SNAPSHOT").is_some() {
-            "io.github.design_nexus.nixe.Git.Preview"
+        .application_id(if std::env::var_os("NYX_GIT_SNAPSHOT").is_some() {
+            "io.github.design_nexus.nyx.Git.Preview"
         } else {
-            "io.github.design_nexus.nixe.Git"
+            "io.github.design_nexus.nyx.Git"
         })
         .flags(gio::ApplicationFlags::HANDLES_COMMAND_LINE)
         .build();
     application.connect_startup(|application| {
-        nixe_core::control::serve_async(application, control::tools(), control::handle);
-        if !nixe_theme::reopens_last_page() {
+        nyx_core::control::serve_async(application, control::tools(), control::handle);
+        if !nyx_theme::reopens_last_page() {
             prefs::update(|p| {
                 p.workspace.open.clear();
                 p.workspace.active = None;
@@ -42,7 +42,7 @@ fn main() -> glib::ExitCode {
             }
         } else if ui.snapshot.borrow().is_none()
             && !ui.busy.get()
-            && nixe_theme::reopens_last_page()
+            && nyx_theme::reopens_last_page()
             && let Some(path) = {
                 let p = prefs::get();
                 p.workspace.active.or(p.last_repository)

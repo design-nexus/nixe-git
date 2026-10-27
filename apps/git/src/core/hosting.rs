@@ -103,7 +103,7 @@ pub fn checkout(root: &Path, request: Checkout) -> Result<Vec<u8>> {
         "Invalid request ref"
     );
     let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)?.as_nanos();
-    let local = format!("refs/nixe/requests/{stamp}-{}", std::process::id());
+    let local = format!("refs/nyx/requests/{stamp}-{}", std::process::id());
     let args: Vec<OsString> = [
         "-c",
         "protocol.ext.allow=never",
@@ -123,7 +123,7 @@ pub fn checkout(root: &Path, request: Checkout) -> Result<Vec<u8>> {
     let actual = repo.find_reference(local.as_str())?.peel_to_commit()?.id.to_string();
     ensure!(
         actual == request.expected,
-        "The request branch changed while fetching. Refresh its details and retry; the fetched commit remains in its private Nixe ref."
+        "The request branch changed while fetching. Refresh its details and retry; the fetched commit remains in its private Nyx ref."
     );
     request.guard.verify(root)?;
     operations::invoke(

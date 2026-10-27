@@ -1,4 +1,4 @@
-pub use nixe_theme::ThemeMode;
+pub use nyx_theme::ThemeMode;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -15,8 +15,8 @@ pub struct Prefs {
     pub details_position: i32,
     pub graph_zoom: f64,
     pub last_view: String,
-    pub accounts: Vec<nixe_git::providers::Account>,
-    pub workspace: nixe_git::core::workspace::Workspace,
+    pub accounts: Vec<nyx_git::providers::Account>,
+    pub workspace: nyx_git::core::workspace::Workspace,
 }
 impl Default for Prefs {
     fn default() -> Self {
@@ -37,4 +37,4 @@ impl Default for Prefs {
         }
     }
 }
-nixe_core::prefs_store!(Prefs);
+nyx_core::prefs_store!(Prefs);

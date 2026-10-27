@@ -7,14 +7,14 @@ use super::{
 };
 use crate::prefs;
 use gtk::{gdk, glib, prelude::*};
-use nixe_git::{
+use nyx_git::{
     core::history::{Event, Request, Scope, Session},
     graph::{
         model::{Decoration, Query, Row},
         virtualization::{MAX_CACHE, PAGE_ROWS, visible_range},
     },
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::{
     cell::{Cell, RefCell},
     path::PathBuf,

@@ -1,8 +1,8 @@
 use super::{Item, item, window::current};
 use crate::prefs;
 use gtk::{gdk, glib, prelude::*};
-use nixe_git::core::navigation::{self, Action, Inventory, Kind};
-use nixe_ui::widgets;
+use nyx_git::core::navigation::{self, Action, Inventory, Kind};
+use nyx_ui::widgets;
 use std::{
     cell::{Cell, RefCell},
     path::PathBuf,
@@ -93,7 +93,7 @@ impl Sidebar {
         self.status.set_text("Loading repository items…");
         let generation = self.generation.get() + 1;
         self.generation.set(generation);
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || navigation::read(&root).map(|data| (root, data)),
             move |result| {
                 let Some(ui) = current() else { return };
@@ -135,7 +135,7 @@ impl Sidebar {
             .iter()
             .find(|r| r.root == root)
             .map(|r| r.sidebar_closed.clone())
-            .unwrap_or_else(|| nixe_git::core::workspace::RepositoryState::default().sidebar_closed);
+            .unwrap_or_else(|| nyx_git::core::workspace::RepositoryState::default().sidebar_closed);
         for group in &data.groups {
             let matches = group
                 .items
@@ -295,7 +295,7 @@ fn menu(button: &gtk::Button, root: &PathBuf, action: &Action, x: f64, y: f64) {
             let (r, name) = (root.clone(), branch.to_string());
             items.push(item("Switch to this branch", move || {
                 if let Some(ui) = current() {
-                    ui.execute_at(r.clone(), nixe_git::core::operations::Operation::SwitchBranch(name.clone()));
+                    ui.execute_at(r.clone(), nyx_git::core::operations::Operation::SwitchBranch(name.clone()));
                 }
             }));
             if *commit {

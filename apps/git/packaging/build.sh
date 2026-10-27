@@ -17,18 +17,18 @@ done
 # Ask Cargo for its output directory, including configured CARGO_TARGET_DIR overrides.
 metadata=$(cd "$workspace" && cargo metadata --no-deps --format-version 1 --locked)
 target_dir=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["target_directory"])' <<< "$metadata")
-[[ ${NIXE_SKIP_BUILD:-0} == 1 ]] || (cd "$workspace" && cargo build --release --locked -p nixe-git)
+[[ ${NYX_SKIP_BUILD:-0} == 1 ]] || (cd "$workspace" && cargo build --release --locked -p nyx-git)
 export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git -C "$workspace" log -1 --format=%ct)}"
 output="$target_dir/packages"
 mkdir -p "$output"
-staging=$(mktemp -d "$output/.nixe-git.XXXXXXXX")
+staging=$(mktemp -d "$output/.nyx-git.XXXXXXXX")
 trap 'rm -rf -- "$staging"' EXIT
-install -m755 "$target_dir/release/nixe-git" "$staging/nixe-git"
+install -m755 "$target_dir/release/nyx-git" "$staging/nyx-git"
 install -m644 "$recipe_dir/PKGBUILD" "$staging/PKGBUILD"
-install -m644 "$workspace/apps/git/data/io.github.design_nexus.nixe.Git.desktop" "$staging/"
-install -m644 "$workspace/crates/nixe-icons/apps/io.github.design_nexus.nixe.Git.svg" "$staging/"
+install -m644 "$workspace/apps/git/data/io.github.design_nexus.nyx.Git.desktop" "$staging/"
+install -m644 "$workspace/crates/nyx-icons/apps/io.github.design_nexus.nyx.Git.svg" "$staging/"
 install -m644 "$workspace/LICENSE" "$workspace/apps/git/README.md" "$workspace/apps/git/PLAN.md" "$staging/"
-desktop-file-validate "$staging/io.github.design_nexus.nixe.Git.desktop"
+desktop-file-validate "$staging/io.github.design_nexus.nyx.Git.desktop"
 # Freeze checksums before makepkg consumes the staged build.
 (cd "$staging" && makepkg --geninteg >> PKGBUILD)
 (cd "$staging" && PKGDEST="$output" makepkg --force --noconfirm)
@@ -42,14 +42,14 @@ if $install_package; then
   else pkexec pacman -U --noconfirm "$package"; fi
   # Retire user-local copies only after pacman has successfully installed the package.
   # Keep a reversible backup, and let the suite's launcher find the managed binary.
-  state="${XDG_STATE_HOME:-$HOME/.local/state}/nixe-git/package-backups"
+  state="${XDG_STATE_HOME:-$HOME/.local/state}/nyx-git/package-backups"
   mkdir -p "$state" "$HOME/.local/bin"
   backup=$(mktemp -d "$state/install.XXXXXXXX")
-  for entry in "$HOME/.local/bin/nixe-git" \
-    "${XDG_DATA_HOME:-$HOME/.local/share}/applications/io.github.design_nexus.nixe.Git.desktop" \
-    "${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor/scalable/apps/io.github.design_nexus.nixe.Git.svg"; do
+  for entry in "$HOME/.local/bin/nyx-git" \
+    "${XDG_DATA_HOME:-$HOME/.local/share}/applications/io.github.design_nexus.nyx.Git.desktop" \
+    "${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor/scalable/apps/io.github.design_nexus.nyx.Git.svg"; do
     if [[ -e $entry || -L $entry ]]; then mv -- "$entry" "$backup/$(basename -- "$entry")"; fi
   done
-  ln -s /usr/bin/nixe-git "$HOME/.local/bin/nixe-git"
-  printf 'Installed nixe-git. Previous user-local files: %s\n' "$backup"
+  ln -s /usr/bin/nyx-git "$HOME/.local/bin/nyx-git"
+  printf 'Installed nyx-git. Previous user-local files: %s\n' "$backup"
 fi

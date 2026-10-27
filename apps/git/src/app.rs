@@ -1,7 +1,7 @@
 //! Serialized inspection jobs; GTK widgets never enter worker threads.
 use crate::{prefs, ui::window::Ui};
 use gtk::prelude::*;
-use nixe_git::core::{repository, watch::Plan};
+use nyx_git::core::{repository, watch::Plan};
 use std::{path::PathBuf, rc::Rc};
 
 impl Ui {
@@ -31,7 +31,7 @@ impl Ui {
             self.workflow.sensitive(false);
         }
         let weak = Rc::downgrade(self);
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || {
                 let result = repository::load_reusing(&path, plan);
                 (path, result)
@@ -96,7 +96,7 @@ impl Ui {
     pub fn discover(self: &Rc<Self>, folder: PathBuf) {
         let weak = Rc::downgrade(self);
         self.readout.set_text("Looking for repositories…");
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || repository::discover(&folder),
             move |result| {
                 let Some(ui) = weak.upgrade() else { return };
@@ -130,23 +130,23 @@ impl Ui {
     pub fn root(&self) -> Option<PathBuf> {
         self.snapshot.borrow().as_ref().map(|s| s.repository.root.clone())
     }
-    pub fn execute(self: &Rc<Self>, operation: nixe_git::core::operations::Operation) {
+    pub fn execute(self: &Rc<Self>, operation: nyx_git::core::operations::Operation) {
         if let Some(root) = self.root() {
             self.execute_at(root, operation);
         } else {
             self.toast("Open a repository first.");
         }
     }
-    pub fn execute_at(self: &Rc<Self>, root: PathBuf, operation: nixe_git::core::operations::Operation) {
+    pub fn execute_at(self: &Rc<Self>, root: PathBuf, operation: nyx_git::core::operations::Operation) {
         self.execute_at_then(root, operation, |_| {});
     }
     pub fn execute_at_then(
         self: &Rc<Self>,
         root: PathBuf,
-        operation: nixe_git::core::operations::Operation,
+        operation: nyx_git::core::operations::Operation,
         done: impl FnOnce(Result<(), String>) + 'static,
     ) {
-        use nixe_git::core::operations::{self, Operation};
+        use nyx_git::core::operations::{self, Operation};
         let mut done = Some(done);
         let mut refuse = |message: &str| {
             self.toast(message);
@@ -201,9 +201,9 @@ impl Ui {
         let worker_root = root.clone();
         let plan = self.snapshot.borrow().as_ref().filter(|_| !refresh_history).map(|s| s.watch.clone());
         let weak = Rc::downgrade(self);
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || {
-                let result = nixe_git::core::jobs::controlled(control, || operations::run(&worker_root, operation));
+                let result = nyx_git::core::jobs::controlled(control, || operations::run(&worker_root, operation));
                 let snapshot = repository::load_reusing(&worker_root, plan);
                 (result, snapshot)
             },

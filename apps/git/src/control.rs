@@ -1,11 +1,11 @@
-//! Git's tools on the control interface (`nixe_core::control`), for Nixe Assistant: open a
+//! Git's tools on the control interface (`nyx_core::control`), for Nyx Assistant: open a
 //! repository, read the open one's status and recent commits, and fetch. Nothing commits,
 //! pushes, discards or rewrites history. (`repo.`, as the Assistant's own `git.status`
 //! already reads repositories without the app.)
 
 use crate::ui::window;
 use gtk::prelude::*;
-use nixe_core::control::{Reply, home_path, text};
+use nyx_core::control::{Reply, home_path, text};
 use serde_json::{Value, json};
 
 pub fn tools() -> Value {
@@ -39,7 +39,7 @@ fn log(count: u64, reply: Reply) {
     let Some(root) = window::current().and_then(|ui| ui.root()) else {
         return reply(Err("no repository is open in Git".into()));
     };
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || {
             std::process::Command::new("git")
                 .arg("-C")
@@ -83,7 +83,7 @@ pub fn handle(name: &str, args: Value, reply: Reply) {
         "repo.log" => log(args["count"].as_u64().unwrap_or(10).clamp(1, 50), reply),
         "repo.fetch" => {
             let Some(root) = ui.root() else { return reply(Err("no repository is open in Git".into())) };
-            ui.execute_at_then(root, nixe_git::core::operations::Operation::Fetch, move |result| {
+            ui.execute_at_then(root, nyx_git::core::operations::Operation::Fetch, move |result| {
                 reply(result.map(|_| json!({"fetched": true})))
             });
         }

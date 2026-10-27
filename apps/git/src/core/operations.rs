@@ -420,7 +420,7 @@ pub fn hint(message: &str, pull: bool) -> Option<&'static str> {
         || m.contains("terminal prompts disabled")
         || m.contains("host key verification failed")
     {
-        Some("Git couldn't sign in. Nixe uses your system credentials: load your key into the SSH agent or set up a Git credential helper.")
+        Some("Git couldn't sign in. Nyx uses your system credentials: load your key into the SSH agent or set up a Git credential helper.")
     } else if m.contains("could not resolve host") || m.contains("unable to access") || m.contains("connection timed out") || m.contains("network is unreachable") {
         Some("The remote couldn't be reached. Check the network and the remote's URL.")
     } else {

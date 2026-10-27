@@ -1,7 +1,7 @@
 use super::window::{Ui, current};
 use gtk::{gio, glib, prelude::*};
-use nixe_git::core::{jobs::Control, operations::Operation};
-use nixe_ui::widgets;
+use nyx_git::core::{jobs::Control, operations::Operation};
+use nyx_ui::widgets;
 use std::{
     cell::{Cell, RefCell},
     path::{Path, PathBuf},
@@ -163,7 +163,7 @@ impl Ui {
         self.tasks.finish(id, result.clone());
         self.update_tasks();
         if !gtk::Window::list_toplevels().iter().any(|w| w.downcast_ref::<gtk::Window>().is_some_and(|w| w.is_active()))
-            && std::env::var_os("NIXE_GIT_SNAPSHOT").is_none()
+            && std::env::var_os("NYX_GIT_SNAPSHOT").is_none()
             && let Some(record) = self.tasks.records.borrow().iter().find(|r| r.id == id)
             && let Some(app) = self.window.application()
         {

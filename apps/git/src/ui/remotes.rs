@@ -1,10 +1,10 @@
 use super::{window::current, workflow::confirm};
 use gtk::prelude::*;
-use nixe_git::core::{
+use nyx_git::core::{
     operations::Operation,
     remotes::{self, Action, Remote, Snapshot},
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::rc::Rc;
 
 fn note(body: &gtk::Box, text: &str) -> gtk::Label {
@@ -19,7 +19,7 @@ pub fn show() {
 }
 pub fn show_selected(selected: Option<String>) {
     let Some(root) = current().and_then(|ui| ui.root()) else { return };
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || remotes::read(&root),
         move |result| {
             let Some(ui) = current() else { return };
@@ -175,7 +175,7 @@ fn server_branches(remote: String) {
     buttons.append(&close);
     body.append(&buttons);
     dialog.present();
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || remotes::branches(&root, &remote),
         move |result| {
             if !dialog.is_visible() {
@@ -234,7 +234,7 @@ fn server_branches(remote: String) {
             let Some(branch) = listing.branches.get(choice.selected() as usize).cloned() else { return };
             d.close();
             let listing = listing.clone();
-            confirm("Delete server branch?", &format!("Delete {} from {}’s push destination for {} at {}. Nixe first fetches this tip into local Recovery, then deletes only if the server tip is unchanged. Local branches and working files remain. Server hooks and permissions still apply.", branch.name, listing.remote, listing.snapshot.root.display(), branch.id), "Delete server branch", move || {
+            confirm("Delete server branch?", &format!("Delete {} from {}’s push destination for {} at {}. Nyx first fetches this tip into local Recovery, then deletes only if the server tip is unchanged. Local branches and working files remain. Server hooks and permissions still apply.", branch.name, listing.remote, listing.snapshot.root.display(), branch.id), "Delete server branch", move || {
                 if let Some(ui) = current() {
                     ui.execute_at(listing.snapshot.root.clone(), Operation::DeleteRemoteBranch { listing: Box::new((*listing).clone()), branch: branch.name.clone(), expected: branch.id.clone() });
                 }

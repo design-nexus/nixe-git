@@ -1,10 +1,10 @@
 use super::{diff_view::DiffView, window::current};
 use gtk::{glib, prelude::*};
-use nixe_git::core::{
+use nyx_git::core::{
     file_history::{self, Entry, PAGE_SIZE},
     jobs::{self, Control},
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::{
     cell::{Cell, RefCell},
     path::PathBuf,
@@ -163,7 +163,7 @@ pub fn open(root: PathBuf, file: PathBuf, anchor: Option<String>) {
     view.load(0);
     // Retain the dialog state while open, and follow live theme changes.
     let weak = Rc::downgrade(&view);
-    nixe_theme::subscribe(&view.dialog, move || {
+    nyx_theme::subscribe(&view.dialog, move || {
         if let Some(view) = weak.upgrade() {
             view.diff.recolor();
         }
@@ -191,7 +191,7 @@ impl View {
         *self.page_control.borrow_mut() = Some(control.clone());
         let (root, file, anchor) = (self.root.clone(), self.file.clone(), self.anchor.borrow().clone());
         let weak = Rc::downgrade(self);
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || jobs::controlled(control, || file_history::page(&root, &file, anchor.as_deref(), offset, PAGE_SIZE)),
             move |result| {
                 let Some(view) = weak.upgrade().filter(|v| v.dialog.is_visible()) else { return };
@@ -283,7 +283,7 @@ impl View {
         *self.diff_control.borrow_mut() = Some(control.clone());
         let root = self.root.clone();
         let weak = Rc::downgrade(self);
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || jobs::controlled(control, || file_history::diff(&root, &entry)),
             move |result| {
                 let Some(view) = weak.upgrade().filter(|v| v.dialog.is_visible() && v.diff_generation.get() == generation) else {

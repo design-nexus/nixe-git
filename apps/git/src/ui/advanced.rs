@@ -1,10 +1,10 @@
 use super::{window::current, workflow::ask};
 use gtk::prelude::*;
-use nixe_git::core::{
+use nyx_git::core::{
     advanced::{self, Action, Guard, Pick, ResetMode, Step},
     operations::Operation,
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::path::PathBuf;
 fn error(e: impl std::fmt::Display) {
     if let Some(ui) = current() {
@@ -38,7 +38,7 @@ fn execute(root: PathBuf, action: Action, guard: Guard) {
 }
 /// Run `action` straight away (it was just asked for in a dialog), with a fresh guard.
 fn execute_now(root: PathBuf, action: Action) {
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || Guard::capture(&root).map(|g| (root, g)),
         move |result| match result {
             Ok((root, guard)) => execute(root, action, guard),
@@ -51,7 +51,7 @@ pub fn prepare(action: Action, effects: String) {
     prepare_at(root, action, effects);
 }
 fn prepare_at(root: PathBuf, action: Action, effects: String) {
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || Guard::capture(&root).map(|g| (root, g)),
         move |result| match result {
             Ok((root, guard)) => {
@@ -144,7 +144,7 @@ pub fn show(target: Option<String>) {
 /// tag, checkout, branch, delete-tag, delete-branch) at `text`: a ref name or full hash.
 pub(super) fn target_action(kind: &'static str, text: String) {
     let Some(root) = current().and_then(|ui| ui.root()) else { return };
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || -> anyhow::Result<_> {
             let id = if kind == "delete-tag" || kind == "delete-branch" {
                 let prefix = if kind == "delete-tag" { "refs/tags/" } else { "refs/heads/" };
@@ -281,7 +281,7 @@ pub(super) fn target_action(kind: &'static str, text: String) {
                         "Delete local branch {text} even if it has unmerged commits. A recovery reference retains its tip. Git refuses the current branch or a branch checked out in another worktree."
                     ),
                 ),
-                "interactive" | "squash" => nixe_core::cmd::background(
+                "interactive" | "squash" => nyx_core::cmd::background(
                     move || advanced::plan(&root, &id).map(|steps| (root, id, steps)),
                     move |result| match result {
                         Ok((root, base, steps)) => {
@@ -337,7 +337,7 @@ fn edit_plan(root: PathBuf, base: String, original: Vec<Step>) {
 }
 pub(super) fn recovery() {
     let Some(root) = current().and_then(|ui| ui.root()) else { return };
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || advanced::recovery(&root).map(|records| (root, records)),
         move |result| match result {
             Ok((root, records)) => {
@@ -404,7 +404,7 @@ fn force_push() {
                 move |branch| {
                     let root = root.clone();
                     let remote = remote.clone();
-                    nixe_core::cmd::background(
+                    nyx_core::cmd::background(
                         move || advanced::remote_tip(&root, &remote, &branch).map(|lease| (root, remote, branch, lease)),
                         move |result| match result {
                             Ok((root, remote, branch, lease)) => prepare_at(

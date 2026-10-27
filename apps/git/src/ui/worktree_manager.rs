@@ -1,11 +1,11 @@
 use super::{window::current, workflow::confirm};
 use gtk::{gio, prelude::*};
-use nixe_git::core::{
+use nyx_git::core::{
     advanced,
     operations::{self, Operation},
     worktrees::{self, Action, State},
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::path::PathBuf;
 fn error(e: impl std::fmt::Display) {
     if let Some(ui) = current() {
@@ -38,7 +38,7 @@ pub fn show() {
         error("Open a repository first.");
         return;
     };
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || worktrees::overview(&root).map(|entries| (root, entries)),
         move |result| {
             let (root, entries) = match result {
@@ -137,7 +137,7 @@ pub fn show() {
                     let d = dialog.clone();
                     remove.connect_clicked(move |_|{
                     d.close();let r=r.clone();let expected=expected.clone();
-                    nixe_core::cmd::background(move||worktrees::removal_guard(&r,&expected).map(|guard|(r,expected,guard)),move|result|match result{Ok((r,expected,guard))=>confirm("Remove clean worktree?",&format!("Delete the checkout directory {} and its Git worktree registration. The associated branch remains. Dirty, ignored, locked and externally changed worktrees are refused.",expected.path.display()),"Remove worktree",move||run(r.clone(),Action::Remove{expected:expected.clone(),guard:Box::new(guard.clone())})),Err(e)=>fail(format!("{e:#}"))});
+                    nyx_core::cmd::background(move||worktrees::removal_guard(&r,&expected).map(|guard|(r,expected,guard)),move|result|match result{Ok((r,expected,guard))=>confirm("Remove clean worktree?",&format!("Delete the checkout directory {} and its Git worktree registration. The associated branch remains. Dirty, ignored, locked and externally changed worktrees are refused.",expected.path.display()),"Remove worktree",move||run(r.clone(),Action::Remove{expected:expected.clone(),guard:Box::new(guard.clone())})),Err(e)=>fail(format!("{e:#}"))});
                 });
                     actions.insert(&remove, -1);
                 }
@@ -168,7 +168,7 @@ pub fn show() {
     );
 }
 fn create_dialog(root: PathBuf) {
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || operations::run(&root, Operation::Branches).map(|branches| (root, branches)),
         move |result| {
             let (root, branches) = match result {
@@ -249,7 +249,7 @@ fn create_dialog(root: PathBuf) {
                 let target = if is_new { base.text().to_string() } else { format!("refs/heads/{branch}") };
                 let root = root.clone();
                 let d = d.clone();
-                nixe_core::cmd::background(
+                nyx_core::cmd::background(
                     move || {
                         advanced::resolve_target(&root, &target).map(|base| {
                             (root, Action::Create { path: destination.clone(), branch, new_branch: is_new, base }, destination)

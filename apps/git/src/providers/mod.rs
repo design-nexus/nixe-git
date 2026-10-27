@@ -156,7 +156,7 @@ impl Client {
             .connect_timeout(Duration::from_secs(10))
             .timeout(Duration::from_secs(30))
             .redirect(redirect::Policy::none())
-            .user_agent("Nixe-Git/0.1")
+            .user_agent("Nyx-Git/0.1")
             .build()?;
         Ok(Self { account, http, token, api })
     }

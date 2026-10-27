@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     jobs::{self, Control},
     operations::{self, Operation},
     repository, watch,
@@ -102,7 +102,7 @@ fn common_worktree_locks_queue_fetches_and_allow_independent_repositories() {
     jobs::locked(&other, || Ok(())).unwrap();
     let child = Command::new(std::env::current_exe().unwrap())
         .args(["--exact", "lock_child_probe", "--ignored"])
-        .env("NIXE_GIT_LOCK_PROBE", &root)
+        .env("NYX_GIT_LOCK_PROBE", &root)
         .output()
         .unwrap();
     assert!(child.status.success(), "{}", String::from_utf8_lossy(&child.stdout));
@@ -124,7 +124,7 @@ fn common_worktree_locks_queue_fetches_and_allow_independent_repositories() {
 #[test]
 #[ignore = "Spawned by the cross-process lock test"]
 fn lock_child_probe() {
-    let root = PathBuf::from(std::env::var_os("NIXE_GIT_LOCK_PROBE").unwrap());
+    let root = PathBuf::from(std::env::var_os("NYX_GIT_LOCK_PROBE").unwrap());
     assert!(jobs::locked(&root, || Ok(())).is_err());
 }
 #[test]

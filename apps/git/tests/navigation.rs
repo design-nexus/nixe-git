@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     navigation::{self, Action, Kind},
     workspace::Workspace,
 };
@@ -49,7 +49,7 @@ fn bounded_sidebar_inventory_reads_refs_stashes_worktrees_and_remotes_without_mu
     fs::write(root.join("file"), "uncommitted\n").unwrap();
     let index = fs::read(root.join(".git/index")).unwrap();
     let inventory = navigation::read(&root).unwrap();
-    let watch = nixe_git::core::watch::plan(&nixe_git::core::repository::inspect(&root).unwrap()).unwrap();
+    let watch = nyx_git::core::watch::plan(&nyx_git::core::repository::inspect(&root).unwrap()).unwrap();
     assert!(watch.directories.contains(&root.join(".git/worktrees")));
     let group = |kind| inventory.groups.iter().find(|g| g.kind == kind).unwrap();
     assert!(group(Kind::Local).items.iter().any(|i| i.name == "main"

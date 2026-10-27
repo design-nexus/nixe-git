@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     advanced,
     operations::{self, Operation},
     remotes::{self, Action},
@@ -77,7 +77,7 @@ fn native_remote_edits_preserve_work_and_retain_removed_tracking_tips() {
     change(root, Action::Remove { name: "upstream".into() }).unwrap();
     assert!(remotes::read(root).unwrap().remotes.is_empty());
     assert!(git(root, &["for-each-ref", "refs/remotes/"]).is_empty());
-    assert!(advanced::recovery(root).unwrap().iter().any(|r| r.id == tip && r.label.starts_with("refs/nixe/recovery/")));
+    assert!(advanced::recovery(root).unwrap().iter().any(|r| r.id == tip && r.label.starts_with("refs/nyx/recovery/")));
     assert_eq!(git(root, &["rev-parse", "HEAD"]), head);
     assert_eq!(fs::read_to_string(root.join("keep")).unwrap(), "working contents\n");
 }

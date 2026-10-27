@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     advanced::{self, Action, Guard, Pick, ResetMode},
     conflicts::{self, Resolution},
     repository,
@@ -147,7 +147,7 @@ fn interactive_rebase_and_squash_hook_failure_roll_back() {
     steps.swap(0, 1);
     steps[1].action = Pick::Fixup;
     steps[2].action = Pick::Drop;
-    apply(p, Action::Interactive { base: base.clone(), steps, editor: env!("CARGO_BIN_EXE_nixe-git").into() }).unwrap();
+    apply(p, Action::Interactive { base: base.clone(), steps, editor: env!("CARGO_BIN_EXE_nyx-git").into() }).unwrap();
     assert_eq!(git(p, &["rev-list", "--count", &format!("{base}..HEAD")]), "1");
     assert!(p.join("one").exists());
     assert!(p.join("two").exists());

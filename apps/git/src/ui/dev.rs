@@ -1,9 +1,9 @@
-//! Developer previews (`NIXE_GIT_SNAPSHOT`, `NIXE_GIT_PREVIEW_*`): open one dialog once a
+//! Developer previews (`NYX_GIT_SNAPSHOT`, `NYX_GIT_PREVIEW_*`): open one dialog once a
 //! repository has loaded, so a snapshot can capture it. Nothing here runs otherwise.
 use gtk::prelude::*;
 
 pub fn active() -> bool {
-    std::env::var_os("NIXE_GIT_SNAPSHOT").is_some()
+    std::env::var_os("NYX_GIT_SNAPSHOT").is_some()
 }
 
 fn open_titled(title: &str) -> bool {
@@ -18,38 +18,38 @@ pub fn after_apply(ui: &super::window::Ui) {
         return;
     }
     let var = |name: &str| std::env::var_os(name);
-    if var("NIXE_GIT_PREVIEW_JOBS").is_some() {
+    if var("NYX_GIT_PREVIEW_JOBS").is_some() {
         super::tasks::preview();
-    } else if let Some(file) = var("NIXE_GIT_PREVIEW_CONFLICT") {
+    } else if let Some(file) = var("NYX_GIT_PREVIEW_CONFLICT") {
         super::conflict_editor::open(file.into());
-    } else if let Some(file) = var("NIXE_GIT_PREVIEW_FILE_HISTORY") {
+    } else if let Some(file) = var("NYX_GIT_PREVIEW_FILE_HISTORY") {
         if !open_titled("File history")
             && let Some(root) = ui.root()
         {
             super::file_history::open(root, file.into(), None);
         }
-    } else if var("NIXE_GIT_PREVIEW_WORKTREES").is_some() {
+    } else if var("NYX_GIT_PREVIEW_WORKTREES").is_some() {
         super::worktree_manager::show();
-    } else if var("NIXE_GIT_PREVIEW_SUBMODULES").is_some() {
+    } else if var("NYX_GIT_PREVIEW_SUBMODULES").is_some() {
         if !open_titled("Submodules") {
             super::submodules::show();
         }
-    } else if var("NIXE_GIT_PREVIEW_HOSTING").is_some() {
+    } else if var("NYX_GIT_PREVIEW_HOSTING").is_some() {
         super::providers::preview();
-    } else if var("NIXE_GIT_PREVIEW_ADVANCED").is_some() {
+    } else if var("NYX_GIT_PREVIEW_ADVANCED").is_some() {
         super::advanced::show(None);
     }
 }
 
-/// Capture the frontmost window to the PNG named by `NIXE_GIT_SNAPSHOT`, then quit. The same
+/// Capture the frontmost window to the PNG named by `NYX_GIT_SNAPSHOT`, then quit. The same
 /// developer aid Music uses: it captures the actual GTK frame.
 pub fn capture(app: &gtk::Application, window: &gtk::ApplicationWindow) {
-    let Some(path) = std::env::var_os("NIXE_GIT_SNAPSHOT") else { return };
+    let Some(path) = std::env::var_os("NYX_GIT_SNAPSHOT") else { return };
     let w = window.clone();
     let application = app.clone();
     w.set_opacity(0.01);
     gtk::glib::timeout_add_local_once(std::time::Duration::from_millis(2800), move || {
-        if let Some(out) = std::env::var_os("NIXE_GIT_PREVIEW_STATE")
+        if let Some(out) = std::env::var_os("NYX_GIT_PREVIEW_STATE")
             && let Some(ui) = super::window::current()
         {
             let s = ui.snapshot.borrow();
@@ -76,7 +76,7 @@ pub fn capture(app: &gtk::Application, window: &gtk::ApplicationWindow) {
         if let Some(child) = w.child() {
             let (width, height) = (child.width(), child.height());
             let snapshot = gtk::Snapshot::new();
-            let bg = gtk::gdk::RGBA::parse(nixe_theme::palette().bg).unwrap_or(gtk::gdk::RGBA::BLACK);
+            let bg = gtk::gdk::RGBA::parse(nyx_theme::palette().bg).unwrap_or(gtk::gdk::RGBA::BLACK);
             snapshot.append_color(&bg, &gtk::graphene::Rect::new(0.0, 0.0, width as f32, height as f32));
             w.snapshot_child(&child, &snapshot);
             if let (Some(node), Some(renderer)) = (snapshot.to_node(), w.renderer())

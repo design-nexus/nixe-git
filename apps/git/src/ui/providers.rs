@@ -1,8 +1,8 @@
-//! Optional hosting dialogs reuse Nixe cards and background jobs.
+//! Optional hosting dialogs reuse Nyx cards and background jobs.
 use super::{window::current, workflow::confirm};
 use crate::prefs;
 use gtk::{gio, prelude::*};
-use nixe_git::{
+use nyx_git::{
     core::{
         advanced::Guard,
         hosting,
@@ -13,7 +13,7 @@ use nixe_git::{
         credentials::{self, Secret},
     },
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::{path::PathBuf, rc::Rc};
 fn error(e: impl std::fmt::Display) {
     if let Some(ui) = current() {
@@ -55,7 +55,7 @@ fn client_job<T: Send + 'static>(
     work: impl FnOnce(Client) -> anyhow::Result<T> + Send + 'static,
     done: impl FnOnce(anyhow::Result<T>) + 'static,
 ) {
-    nixe_core::cmd::background(move || Client::new(account.clone(), credentials::load(&account)?).and_then(work), done);
+    nyx_core::cmd::background(move || Client::new(account.clone(), credentials::load(&account)?).and_then(work), done);
 }
 fn link(account: &Account, value: &str) {
     match account_link(account, value) {
@@ -125,7 +125,7 @@ pub fn show() {
         let remove = gtk::Button::with_label("Disconnect…");
         let a = account.clone();
         let d = dialog.clone();
-        remove.connect_clicked(move |_|{d.close();let a=a.clone();confirm("Disconnect hosting account?","Remove this account from Git and delete its dedicated token from Secret Service, if any. Existing Git helper credentials and cloned repositories remain.","Disconnect",move||{let a=a.clone();nixe_core::cmd::background(move||credentials::delete(&a).map(|_|a.id),|result|match result{Ok(id)=>{prefs::update(|p|p.accounts.retain(|a|a.id!=id));show();},Err(e)=>fail(format!("{e:#}"))});});});
+        remove.connect_clicked(move |_|{d.close();let a=a.clone();confirm("Disconnect hosting account?","Remove this account from Git and delete its dedicated token from Secret Service, if any. Existing Git helper credentials and cloned repositories remain.","Disconnect",move||{let a=a.clone();nyx_core::cmd::background(move||credentials::delete(&a).map(|_|a.id),|result|match result{Ok(id)=>{prefs::update(|p|p.accounts.retain(|a|a.id!=id));show();},Err(e)=>fail(format!("{e:#}"))});});});
         actions.append(&remove);
         rows.append(&row(
             &format!("{} · {}", account.kind.name(), account.username),
@@ -219,7 +219,7 @@ fn connect() {
         let b = button.clone();
         let status = status.clone();
         let d = d.clone();
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || -> anyhow::Result<Account> {
                 let token = match secret {
                     Some(s) => s,
@@ -496,7 +496,7 @@ fn checkout_request(account: Account, repo: Repository, request: Request) {
             let request = request.clone();
             let kind = account.kind;
             let ssh = picker.selected() == 0;
-            nixe_core::cmd::background(
+            nyx_core::cmd::background(
                 move || -> anyhow::Result<_> {
                     let guard = Guard::capture(&root)?;
                     guard.clean()?;
@@ -763,8 +763,8 @@ fn clone_repository(ui: &Rc<super::window::Ui>, url: String, destination: PathBu
     };
     ui.update_tasks();
     let weak = Rc::downgrade(ui);
-    nixe_core::cmd::background(
-        move || nixe_git::core::jobs::controlled(control, || operations::run(&parent, operation)).map(|_| destination),
+    nyx_core::cmd::background(
+        move || nyx_git::core::jobs::controlled(control, || operations::run(&parent, operation)).map(|_| destination),
         move |result| {
             let Some(ui) = weak.upgrade() else { return };
             ui.task_finished(id, result.as_ref().map(|_| ()).map_err(|e| format!("{e:#}")));

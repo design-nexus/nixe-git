@@ -2,7 +2,7 @@
   "application": "git",
   "directory": "git",
   "packages": [
-    "nixe-git"
+    "nyx-git"
   ],
   "manifest": "Cargo.toml",
   "prepare": [],
@@ -13,9 +13,9 @@
       "test",
       "--locked",
       "-p",
-      "nixe-git",
+      "nyx-git",
       "--bin",
-      "nixe-git"
+      "nyx-git"
     ]
   ]
 }

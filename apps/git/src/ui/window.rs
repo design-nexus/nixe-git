@@ -1,8 +1,8 @@
 use super::{Item, item};
 use crate::{prefs, theme};
 use gtk::{gdk, gio, glib, prelude::*};
-use nixe_git::core::{repository::Snapshot, status::FileStatus};
-use nixe_ui::{chrome, widgets};
+use nyx_git::core::{repository::Snapshot, status::FileStatus};
+use nyx_ui::{chrome, widgets};
 use std::{
     cell::{Cell, RefCell},
     path::PathBuf,
@@ -146,11 +146,11 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     prefs::update(|p| p.recent.retain(|r| r.exists()));
     let window = gtk::ApplicationWindow::builder().application(app).title("Git").default_width(1120).default_height(800).build();
     window.add_css_class("git-window");
-    window.set_icon_name(Some("io.github.design_nexus.nixe.Git"));
+    window.set_icon_name(Some("io.github.design_nexus.nyx.Git"));
     window.set_titlebar(Some(&gtk::Box::new(gtk::Orientation::Horizontal, 0)));
-    nixe_ui::keys::install(
+    nyx_ui::keys::install(
         &window,
-        nixe_ui::keys::Common {
+        nyx_ui::keys::Common {
             settings: Some(super::settings::open),
             shortcuts: Some(show_shortcuts),
             close: false,
@@ -185,7 +185,7 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     content.append(&chrome::search_strip(&search));
     let toolbar = gtk::Box::new(gtk::Orientation::Horizontal, 6);
     toolbar.add_css_class("toolbar");
-    let initial = nixe_theme::start_page("history", &prefs::get().last_view);
+    let initial = nyx_theme::start_page("history", &prefs::get().last_view);
     let view_switch = widgets::segmented(&widgets::opts(&[("history", "History"), ("changes", "Changes")]), &initial, |id| {
         if let Some(ui) = current() {
             ui.show_view(&id);
@@ -205,9 +205,9 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
         b
     };
     let sync = Sync {
-        fetch: sync_button("Fetch", "Fetch all remotes (Ctrl+Shift+F)", || run(nixe_git::core::operations::Operation::Fetch)),
+        fetch: sync_button("Fetch", "Fetch all remotes (Ctrl+Shift+F)", || run(nyx_git::core::operations::Operation::Fetch)),
         pull: sync_button("Pull", "Fast-forward from the upstream (Ctrl+Shift+L)", || {
-            run(nixe_git::core::operations::Operation::Pull)
+            run(nyx_git::core::operations::Operation::Pull)
         }),
         push: sync_button("Push", "Push to the upstream (Ctrl+Alt+P)", push),
         menu: super::menu_button(
@@ -544,8 +544,8 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
             gdk::Key::_1 if alt => ui.show_view("history"),
             gdk::Key::_2 if alt => ui.show_view("changes"),
             gdk::Key::Return | gdk::Key::KP_Enter if ctrl => super::workflow::commit(),
-            gdk::Key::f | gdk::Key::F if ctrl && shift => ui.execute(nixe_git::core::operations::Operation::Fetch),
-            gdk::Key::l | gdk::Key::L if ctrl && shift => ui.execute(nixe_git::core::operations::Operation::Pull),
+            gdk::Key::f | gdk::Key::F if ctrl && shift => ui.execute(nyx_git::core::operations::Operation::Fetch),
+            gdk::Key::l | gdk::Key::L if ctrl && shift => ui.execute(nyx_git::core::operations::Operation::Pull),
             gdk::Key::p | gdk::Key::P if ctrl && alt => push(),
             gdk::Key::o | gdk::Key::O if ctrl => choose_folder(shift),
             gdk::Key::f | gdk::Key::F if ctrl => show_search(),
@@ -554,8 +554,8 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
             gdk::Key::F1 => show_shortcuts(),
             gdk::Key::F6 => ui.focus_panel(shift),
             gdk::Key::Escape => {
-                if nixe_ui::settings_card::is_open() {
-                    nixe_ui::settings_card::escape();
+                if nyx_ui::settings_card::is_open() {
+                    nyx_ui::settings_card::escape();
                 } else {
                     // Let GTK close a focused popover before clearing the page's search.
                     if gtk::prelude::GtkWindowExt::focus(&ui.window)
@@ -600,7 +600,7 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     });
     // Restyle the parts GTK CSS doesn't reach when the theme changes.
     let weak = Rc::downgrade(&ui);
-    nixe_theme::subscribe(&ui.window, move || {
+    nyx_theme::subscribe(&ui.window, move || {
         let Some(ui) = weak.upgrade() else { return };
         ui.workflow.diff.recolor();
         ui.graph.details.diff.recolor();
@@ -616,7 +616,7 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     ui
 }
 
-fn run(operation: nixe_git::core::operations::Operation) {
+fn run(operation: nyx_git::core::operations::Operation) {
     if let Some(ui) = current() {
         ui.execute(operation);
     }
@@ -632,7 +632,7 @@ pub fn push() {
         .map(|s| (s.repository.root.clone(), s.repository.branch.clone()));
     match publish {
         Some((root, branch)) => super::repository_actions::push_branch(root, branch),
-        None => ui.execute(nixe_git::core::operations::Operation::Push),
+        None => ui.execute(nyx_git::core::operations::Operation::Push),
     }
 }
 
@@ -973,7 +973,7 @@ impl Ui {
     pub fn resize(&self) {
         let width = if self.window.width() > 0 { self.window.width() } else { self.window.default_width() };
         let compact = width < 980 || prefs::get().sidebar_collapsed;
-        nixe_ui::settings_card::fit(&self.window);
+        nyx_ui::settings_card::fit(&self.window);
         if self.compact.replace(Some(compact)) != Some(compact) {
             if compact {
                 self.nav.add_css_class("compact");

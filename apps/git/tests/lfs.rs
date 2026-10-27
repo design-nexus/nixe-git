@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     lfs::{self, Action},
     operations::{self, Operation},
 };

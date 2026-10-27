@@ -1,5 +1,5 @@
 //! Reproducible, local-only history/layout/cache benchmark. Never touches user repos.
-use nixe_git::{
+use nyx_git::{
     core::history::{Cursor, Scope},
     graph::virtualization::{MAX_CACHE, visible_range},
 };
@@ -17,7 +17,7 @@ fn main() -> anyhow::Result<()> {
     for i in 1..=count {
         let message = format!("Commit {i}\n");
         input.push_str(&format!(
-            "commit refs/heads/main\nmark :{i}\ncommitter Nixe Benchmark <bench@example.invalid> {} +0000\ndata {}\n{}",
+            "commit refs/heads/main\nmark :{i}\ncommitter Nyx Benchmark <bench@example.invalid> {} +0000\ndata {}\n{}",
             1600000000 + i,
             message.len(),
             message

@@ -29,9 +29,9 @@ jobs:
           app_info git
           bash tools/ci-bootstrap.sh $deps
       - run: |
-          useradd -m nixe-build
-          chown -R nixe-build:nixe-build "$GITHUB_WORKSPACE"
-          runuser -u nixe-build -- python3 tools/ci.py
+          useradd -m nyx-build
+          chown -R nyx-build:nyx-build "$GITHUB_WORKSPACE"
+          runuser -u nyx-build -- python3 tools/ci.py
       - run: python3 tools/release.py --tag "$RELEASE_TAG" --publish
         env:
           RELEASE_TAG: ${{ inputs.tag }}

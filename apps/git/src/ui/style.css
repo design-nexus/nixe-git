@@ -1,4 +1,4 @@
-/* Shared Nixe CSS owns the frame, typography, navigation and controls. */
+/* Shared Nyx CSS owns the frame, typography, navigation and controls. */
 .git-window .toolbar { min-height: 46px; padding: 0 12px 0 14px; border-bottom: 1px solid @hairline; background: transparent; }
 .git-files { background: @theme_bg; }
 .git-files row { background: transparent; border-radius: 0; padding: 8px 14px; }

@@ -1,11 +1,11 @@
 use super::{diff_view::DiffView, item, window::current};
 use gtk::prelude::*;
-use nixe_git::core::{
+use nyx_git::core::{
     operations::{self, Operation},
     staging,
     status::FileStatus,
 };
-use nixe_ui::widgets;
+use nyx_ui::widgets;
 use std::{
     cell::{Cell, RefCell},
     path::PathBuf,
@@ -56,7 +56,7 @@ fn discard() {
         return;
     }
     super::advanced::prepare(
-        nixe_git::core::advanced::Action::Discard { file: file.path.clone(), untracked: file.index == '?' },
+        nyx_git::core::advanced::Action::Discard { file: file.path.clone(), untracked: file.index == '?' },
         format!(
             "Discard the unstaged changes to {}. An untracked file is deleted; a tracked one goes back to its staged contents. Discarded changes can't be recovered.",
             file.path.display()
@@ -74,12 +74,12 @@ impl Workflow {
         controls.append(&button("Resolve conflicts…", "Choose a conflicted file", super::conflict_editor::choose));
         controls.append(&button("Continue…", "Continue the active operation", || {
             super::advanced::prepare(
-                nixe_git::core::advanced::Action::Continue,
+                nyx_git::core::advanced::Action::Continue,
                 "Continue using Git's prepared message after all conflicts are resolved and staged.".into(),
             )
         }));
         controls.append(&button("Abort…", "Abort the active operation", || {
-            super::advanced::prepare(nixe_git::core::advanced::Action::Abort,"Abort and restore the original operation state where Git can do so safely. Resolution edits and changes made during the operation may be lost.".into())
+            super::advanced::prepare(nyx_git::core::advanced::Action::Abort,"Abort and restore the original operation state where Git can do so safely. Resolution edits and changes made during the operation may be lost.".into())
         }));
         operation_bar.append(&controls);
         operation_bar.set_visible(false);
@@ -135,7 +135,7 @@ impl Workflow {
             let Some(ui) = current() else { return };
             let Some(root) = ui.root() else { return };
             let before = ui.workflow.message();
-            nixe_core::cmd::background(
+            nyx_core::cmd::background(
                 move || operations::run(&root, Operation::LastMessage).map(|bytes| (root, bytes)),
                 move |result| {
                     let Some(ui) = current() else { return };
@@ -228,7 +228,7 @@ impl Workflow {
         me.sensitive(false);
         me
     }
-    pub fn operation_status(&self, progress: Option<nixe_git::core::advanced::Active>, conflicts: bool) {
+    pub fn operation_status(&self, progress: Option<nyx_git::core::advanced::Active>, conflicts: bool) {
         self.operation_bar.set_visible(progress.is_some() || conflicts);
         self.operation_label.set_text(&format!(
             "{}{}",
@@ -459,7 +459,7 @@ impl super::window::Ui {
             show("Loading diff…");
         }
         let operation = Operation::Diff { file: file.path, cached, untracked: file.index == '?' };
-        nixe_core::cmd::background(
+        nyx_core::cmd::background(
             move || operations::run(&root, operation).map(|bytes| (root, bytes)),
             move |result| {
                 let Some(ui) = current() else { return };

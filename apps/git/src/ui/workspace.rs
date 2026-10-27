@@ -1,8 +1,8 @@
 use super::window::{Ui, current};
 use crate::prefs;
 use gtk::{glib, prelude::*};
-use nixe_git::core::workspace::RepositoryState;
-use nixe_ui::widgets;
+use nyx_git::core::workspace::RepositoryState;
+use nyx_ui::widgets;
 use std::{
     path::{Path, PathBuf},
     rc::Rc,
@@ -165,7 +165,7 @@ impl Ui {
                 self.empty.set_text("Open a repository to view working changes.");
                 self.summary.set_text("Open a repository");
                 self.details.set_text("Select a changed file to inspect its status.");
-                nixe_ui::chrome::set_title(&self.window, "Git", "");
+                nyx_ui::chrome::set_title(&self.window, "Git", "");
                 self.restoring.set(false);
                 self.update_readout();
                 self.update_sync();
@@ -181,15 +181,15 @@ impl Ui {
     }
 }
 pub fn external(root: PathBuf, kind: &'static str) {
-    nixe_core::cmd::background(
+    nyx_core::cmd::background(
         move || -> anyhow::Result<()> {
             anyhow::ensure!(root.is_dir(), "The repository directory is unavailable");
             let (program, args) = match kind {
                 "folder" => ("xdg-open".into(), vec![root.as_os_str().to_os_string()]),
-                "editor" if nixe_core::cmd::present("omarchy-launch-editor") => {
+                "editor" if nyx_core::cmd::present("omarchy-launch-editor") => {
                     ("omarchy-launch-editor".into(), vec![root.as_os_str().to_os_string()])
                 }
-                "terminal" if nixe_core::cmd::present("xdg-terminal-exec") => {
+                "terminal" if nyx_core::cmd::present("xdg-terminal-exec") => {
                     ("xdg-terminal-exec".into(), vec!["--dir".into(), root.as_os_str().into()])
                 }
                 _ => {

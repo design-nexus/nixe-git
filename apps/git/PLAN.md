@@ -4,7 +4,7 @@ Native Linux Git client · Rust · GTK4 · Omarchy / Arch Linux
 
 ## Scope
 
-A free, offline-capable Git client in the Nixe suite, with a GitKraken-class commit
+A free, offline-capable Git client in the Nyx suite, with a GitKraken-class commit
 graph, safe Git workflows, conflict resolution, worktrees, multiple repositories and
 optional GitHub, GitLab, Forgejo and Gitea integration. No IDE, code editor, AI
 features, embedded terminal, custom server or proprietary cloud dependency.
@@ -18,7 +18,7 @@ features are implemented.
 - [x] Read repository `STYLE.md` and parent style guidance.
 - [x] Inspect Music's window, resize handling, theme and settings implementations.
 - [x] Inspect Contacts' application identity, persistence and corrected navigation.
-- [x] Inspect shared `nixe-core`, `nixe-theme`, `nixe-ui` and `nixe-icons`.
+- [x] Inspect shared `nyx-core`, `nyx-theme`, `nyx-ui` and `nyx-icons`.
 - [x] Identify suite installer, launcher and Hyprland conventions.
 - [x] Validate GTK4, GtkSourceView 5, system Git and Rust dependencies locally.
 
@@ -32,7 +32,7 @@ CLI status is used for native Git compatibility. Future object/ref/history reade
 belong in this core; CLI mutations must extend the centralized runner.
 
 `src/app.rs` runs serialized inspection jobs through the existing
-`nixe_core::cmd::background` worker facility. A later repository choice supersedes
+`nyx_core::cmd::background` worker facility. A later repository choice supersedes
 queued refreshes. No Git subprocess or discovery scan runs on GTK's main thread.
 GTK ListView recycles visible file rows. Provider and graph abstractions are deferred
 until needed; no speculative empty modules or nonfunctional action buttons.
@@ -50,7 +50,7 @@ Ctrl+Shift+P stays the suite palette; the suggested Push binding must change lat
 ## Phase 1: Application foundation — implemented
 
 - [x] Rust GTK4 application, suite identity and single-instance command handling.
-- [x] Shared Nixe styling, live themes, manual choice and settings card.
+- [x] Shared Nyx styling, live themes, manual choice and settings card.
 - [x] Main window, fixed-width responsive sidebar and file details.
 - [x] Bounded folder discovery and opening repositories/subfolders/worktrees.
 - [x] Accurate NUL-delimited status, staged/unstaged/untracked/conflict classification.
@@ -60,7 +60,7 @@ Ctrl+Shift+P stays the suite palette; the suggested Push binding must change lat
 - [x] Launcher metadata, shared app icon and installer catalog registration.
 - [x] Targeted parser/argument and temporary-repository integration tests.
 
-Validation: `cargo test -p nixe-git` passed (2 unit tests, 3 temporary-repository
+Validation: `cargo test -p nyx-git` passed (2 unit tests, 3 temporary-repository
 integration tests); the GTK binary compiled, installer scripts passed `bash -n`,
 and the installer catalog lists Git. Interactive visual QA is still pending.
 
@@ -118,7 +118,7 @@ Measured on this machine, 2026-10-17, a synthetic linear 100,000-commit reposito
 first 128 rows including topological initialization 395.8 ms; all traversal/layout
 791.9 ms; cached viewport read average 0.067 ms; 72 rows per sampled 800 px viewport;
 UI cache cap 256 rows; benchmark process RSS about 47.5 MiB. Run:
-`cargo run --release -p nixe-git --example graph_benchmark -- 100000`.
+`cargo run --release -p nyx-git --example graph_benchmark -- 100000`.
 These measure data/layout/cache work, not compositor frame rate. Broader scrolling,
 GPU/high-DPI and accessibility acceptance remains in Phase 7.
 
@@ -168,7 +168,7 @@ Never silently discard work or automatically resolve conflicts.
 - [x] Lock/unlock, guarded clean removal and stale metadata pruning. No force removal;
       main/active/locked/dirty/ignored/unavailable worktrees cannot be removed.
 - [x] Revalidate worktree identity, index/files and branch tips before mutations;
-      retain removal/pruning commit tips in Nixe recovery refs, including detached HEAD.
+      retain removal/pruning commit tips in Nyx recovery refs, including detached HEAD.
 - [x] Scrollable repository tabs, close/middle-close, Ctrl+W and Ctrl+(Shift+)Tab.
       Opening multiple repository arguments queues each inspection without dropping tabs.
 - [x] Searchable repository workspace (Ctrl+K), favorites and named sidebar groups.
@@ -206,7 +206,7 @@ none is available. No user repositories were mutated in validation.
       mergeability/state, source/target/hash/draft metadata; paged repository issues.
 - [x] Explicit request publication after a populated form and final confirmation.
       Drafts use provider support or WIP/Draft title conventions as appropriate.
-- [x] Request checkout fetches a provider request ref into a private Nixe ref,
+- [x] Request checkout fetches a provider request ref into a private Nyx ref,
       verifies the observed commit, requires a matching local remote and clean state,
       and creates a new local branch without overwriting existing branches.
 - [x] HTTPS-only API credentials, sensitive authorization headers, refused redirects,
@@ -258,7 +258,7 @@ helpers and Git transport policy. No forced cancellation or partial-directory cl
 
 - [x] Collapsible sidebar groups for local/remote branches, tags, stashes, worktrees
       and remotes; current branch/upstream hints, loaded-item filtering and section
-      persistence per repository. Reuse Nixe navigation styling and compact behavior.
+      persistence per repository. Reuse Nyx navigation styling and compact behavior.
 - [x] Branch/tag selection scopes history without checkout; explicit keyboard/context
       actions reuse Git safeguards, stash inspection, worktree opening and selected
       remote configuration. F6 targets the expanded sidebar filter.
@@ -312,7 +312,7 @@ only the requested page's metadata is retained. Command output uses the shared
       literal local paths, stale/unsafe/multivalue/custom-fetch/included safeguards.
 - [x] Central Git job controls: bounded transfer progress, session operation history,
       explicit failed-fetch retry and cancellable queued/running fetches and clones.
-- [x] Common Git directory locks serialize Nixe mutations across linked worktrees and
+- [x] Common Git directory locks serialize Nyx mutations across linked worktrees and
       processes; independent repositories can run operations concurrently. Fetches wait
       for the shared lock and can be stopped while queued; other conflicting changes
       are refused. Native Git's own locks continue to protect against external tools.
@@ -355,7 +355,7 @@ only the requested page's metadata is retained. Command output uses the shared
 Limits: operation history is session-only (up to 100 records), at most 32 jobs may be
 active, and only fetch/clone/LFS fetch expose cancellation. API requests still use their bounded
 HTTP timeouts. No automatic mutation retries, lock-file deletion, recovery resets or
-partial-clone cleanup occur. Advisory Nixe locks cannot prevent unrelated external Git
+partial-clone cleanup occur. Advisory Nyx locks cannot prevent unrelated external Git
 processes; native locks and fresh-state safeguards remain necessary. Full arbitrary
 mutation queueing and cancellation are deliberately not claimed. Existing graph
 benchmarks remain data/layout/cache measurements, not current compositor FPS results.
@@ -401,7 +401,7 @@ multi-repo workflows, optional four-provider integrations and daily-use stabilit
       directory appears or goes.
 - [x] History reloads keep the selected commit and scroll position (bounded `Locate`);
       the graph polls its worker only while an answer is due; theme changes arrive by
-      `nixe_theme::subscribe` instead of timers.
+      `nyx_theme::subscribe` instead of timers.
 - [x] Commits keep `#` lines (`--cleanup=whitespace`). Transfer failures get a next
       step only when Git's message points at one; Push publishes a branch without an
       upstream. Commit needs staged changes (or Amend) and shows a 50/72 counter.
@@ -411,5 +411,5 @@ multi-repo workflows, optional four-provider integrations and daily-use stabilit
       context menu (check out, branch, tag, merge, rebase, cherry-pick, revert,
       reset); Ctrl+click compares. Commit files are a list; diffs show file line
       numbers and tinted changes. Errors stay until dismissed.
-- [x] Control interface for Nixe Assistant: `repo.open`, `repo.status`, `repo.log`,
-      `repo.fetch` (not yet listed in the Assistant's nixe-apps ability).
+- [x] Control interface for Nyx Assistant: `repo.open`, `repo.status`, `repo.log`,
+      `repo.fetch` (not yet listed in the Assistant's nyx-apps ability).

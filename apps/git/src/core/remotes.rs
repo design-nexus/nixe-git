@@ -111,7 +111,7 @@ pub fn display_url(value: &str) -> String {
 }
 fn valid_name(root: &Path, name: &str) -> Result<()> {
     ensure!(!name.starts_with('-') && !name.is_empty() && name != ".", "Enter a valid remote name");
-    git(root, "Validate remote name", &["check-ref-format", &format!("refs/remotes/{name}/nixe-check")]).map(|_| ())
+    git(root, "Validate remote name", &["check-ref-format", &format!("refs/remotes/{name}/nyx-check")]).map(|_| ())
 }
 pub fn run(root: &Path, action: Action, expected: &Snapshot) -> Result<Vec<u8>> {
     let actual = read(root)?;
@@ -245,7 +245,7 @@ pub fn delete_branch(root: &Path, listing: &BranchListing, branch: &str, expecte
         "The server branch changed; refresh before deleting"
     );
     let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)?.as_nanos();
-    let recovery = format!("refs/nixe/recovery/{stamp}-{}", std::process::id());
+    let recovery = format!("refs/nyx/recovery/{stamp}-{}", std::process::id());
     let reference = format!("refs/heads/{branch}");
     // Fetch the actual server-only tip before deleting it. A changed tip aborts deletion.
     git(

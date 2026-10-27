@@ -1,4 +1,4 @@
-use nixe_git::core::{
+use nyx_git::core::{
     advanced,
     operations::{self, Operation},
     remotes, repository,
@@ -16,7 +16,7 @@ fn initialize(path: &Path, branch: &str) -> anyhow::Result<Vec<u8>> {
 fn commit(root: &Path, args: &[&str]) -> String {
     let mut all = vec![
         "-c",
-        "user.name=Nixe Test",
+        "user.name=Nyx Test",
         "-c",
         "user.email=test@example.invalid",
         "-c",
@@ -103,13 +103,13 @@ fn deletes_only_push_destination_with_recovery_default_protection_and_exact_tip_
     assert!(delete(listing.clone(), "main", &head).is_err());
     assert!(delete(listing, "delete-me", &old).is_err());
     assert_eq!(git(&push, &["rev-parse", "refs/heads/delete-me"]), new);
-    assert!(advanced::recovery(&root).unwrap().iter().any(|r| r.id == old && r.label.starts_with("refs/nixe/recovery/")));
+    assert!(advanced::recovery(&root).unwrap().iter().any(|r| r.id == old && r.label.starts_with("refs/nyx/recovery/")));
     fs::remove_file(hooks.join("pre-push")).unwrap();
     let listing = remotes::branches(&root, "origin").unwrap();
     delete(listing, "delete-me", &new).unwrap();
     assert!(git(&push, &["for-each-ref", "refs/heads/delete-me"]).is_empty());
     assert_eq!(git(&fetch, &["rev-parse", "refs/heads/delete-me"]), head);
-    assert!(advanced::recovery(&root).unwrap().iter().any(|r| r.id == new && r.label.starts_with("refs/nixe/recovery/")));
+    assert!(advanced::recovery(&root).unwrap().iter().any(|r| r.id == new && r.label.starts_with("refs/nyx/recovery/")));
     assert_eq!(git(&root, &["rev-parse", "HEAD"]), head);
     assert_eq!(fs::read_to_string(root.join("keep")).unwrap(), "uncommitted\n");
 }

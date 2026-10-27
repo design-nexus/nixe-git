@@ -29,7 +29,7 @@ fn tool(account: &Account, verb: &str) -> Command {
     if verb == "store" {
         command.arg("--label=Git hosting account");
     }
-    command.args(["application", "nixe-git", "account", &account.id, "instance", &account.base_url]);
+    command.args(["application", "nyx-git", "account", &account.id, "instance", &account.base_url]);
     command.stderr(Stdio::null());
     command
 }

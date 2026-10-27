@@ -1802,61 +1802,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "743fb55ba31b18fb1ecef6bdc9aa2743314978ac084044301a7eee33fb99a20d"
 
 [[package]]
-name = "nixe-core"
-version = "0.1.0"
-source = "git+https://github.com/design-nexus/nixe-core.git?rev=87682e6c936b6a4f006639b1a1c099e96346c07c#87682e6c936b6a4f006639b1a1c099e96346c07c"
-dependencies = [
- "anyhow",
- "gtk4",
- "serde",
- "serde_json",
- "toml",
-]
-
-[[package]]
-name = "nixe-git"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "gix",
- "gtk4",
- "libc",
- "nixe-core",
- "nixe-theme",
- "nixe-ui",
- "pangocairo",
- "reqwest",
- "serde",
- "serde_json",
- "sourceview5",
- "tempfile",
- "tracing",
- "tracing-subscriber",
- "url",
-]
-
-[[package]]
-name = "nixe-theme"
-version = "0.1.0"
-source = "git+https://github.com/design-nexus/nixe-design.git?rev=b8204de80644e263e32783602f2e0ae393578c9e#b8204de80644e263e32783602f2e0ae393578c9e"
-dependencies = [
- "gtk4",
- "nixe-core",
- "serde",
- "toml",
-]
-
-[[package]]
-name = "nixe-ui"
-version = "0.1.0"
-source = "git+https://github.com/design-nexus/nixe-design.git?rev=b8204de80644e263e32783602f2e0ae393578c9e#b8204de80644e263e32783602f2e0ae393578c9e"
-dependencies = [
- "gtk4",
- "nixe-core",
- "nixe-theme",
-]
-
-[[package]]
 name = "nonempty"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1869,6 +1814,61 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
 dependencies = [
  "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "nyx-core"
+version = "0.1.0"
+source = "git+https://github.com/design-nexus/nyx-core.git?rev=52cba5e27a3dd5f00c780f53e423302b4b5f9c9c#52cba5e27a3dd5f00c780f53e423302b4b5f9c9c"
+dependencies = [
+ "anyhow",
+ "gtk4",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
+name = "nyx-git"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "gix",
+ "gtk4",
+ "libc",
+ "nyx-core",
+ "nyx-theme",
+ "nyx-ui",
+ "pangocairo",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "sourceview5",
+ "tempfile",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+]
+
+[[package]]
+name = "nyx-theme"
+version = "0.1.0"
+source = "git+https://github.com/design-nexus/nyx-design.git?rev=938c638951a53f5874a8276d07ac9dcd68b191ad#938c638951a53f5874a8276d07ac9dcd68b191ad"
+dependencies = [
+ "gtk4",
+ "nyx-core",
+ "serde",
+ "toml",
+]
+
+[[package]]
+name = "nyx-ui"
+version = "0.1.0"
+source = "git+https://github.com/design-nexus/nyx-design.git?rev=938c638951a53f5874a8276d07ac9dcd68b191ad#938c638951a53f5874a8276d07ac9dcd68b191ad"
+dependencies = [
+ "gtk4",
+ "nyx-core",
+ "nyx-theme",
 ]
 
 [[package]]

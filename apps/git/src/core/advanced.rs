@@ -308,11 +308,11 @@ fn git(root: &Path, label: &str, a: Vec<OsString>, input: Option<Vec<u8>>, env: 
 pub(crate) fn checkpoint(root: &Path, id: &str) -> Result<String> {
     operations::valid_id(id)?;
     let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)?.as_nanos();
-    let reference = format!("refs/nixe/recovery/{stamp}-{}", std::process::id());
+    let reference = format!("refs/nyx/recovery/{stamp}-{}", std::process::id());
     git(
         root,
         "Save recovery point",
-        args(&["update-ref", "--create-reflog", "-m", "Nixe recovery point", &reference, id, ""]),
+        args(&["update-ref", "--create-reflog", "-m", "Nyx recovery point", &reference, id, ""]),
         None,
         &[],
     )?;
@@ -387,11 +387,11 @@ fn validate_plan(original: &[Step], steps: &[Step]) -> Result<()> {
 /// Called only through the sequence-editor symlink, before GTK is initialized.
 pub fn sequence_editor() -> Option<i32> {
     let args: Vec<_> = std::env::args_os().collect();
-    if args.first().and_then(|a| Path::new(a).file_name()).is_none_or(|n| n != "nixe-git-sequence-editor") {
+    if args.first().and_then(|a| Path::new(a).file_name()).is_none_or(|n| n != "nyx-git-sequence-editor") {
         return None;
     }
     let result = (|| -> Result<()> {
-        let input = std::env::var_os("NIXE_GIT_REBASE_PLAN").context("Missing rebase plan")?;
+        let input = std::env::var_os("NYX_GIT_REBASE_PLAN").context("Missing rebase plan")?;
         let steps: Vec<Step> = serde_json::from_slice(&fs::read(input)?)?;
         let target = PathBuf::from(args.get(1).context("Missing Git todo file")?);
         ensure!(target.file_name().is_some_and(|n| n == "git-rebase-todo"), "Unexpected editor target");
@@ -406,7 +406,7 @@ pub fn sequence_editor() -> Option<i32> {
     Some(match result {
         Ok(()) => 0,
         Err(e) => {
-            eprintln!("Nixe sequence editor: {e:#}");
+            eprintln!("Nyx sequence editor: {e:#}");
             1
         }
     })
@@ -479,14 +479,14 @@ pub fn run(root: &Path, action: Action, guard: &Guard) -> Result<Vec<u8>> {
     let env = [("GIT_EDITOR".into(), "true".into())];
     let result = match &action {
         Action::Interactive { steps, editor, .. } => {
-            let temp = tempfile::Builder::new().prefix("nixe-git-rebase-").tempdir_in("/tmp")?;
-            let helper = temp.path().join("nixe-git-sequence-editor");
+            let temp = tempfile::Builder::new().prefix("nyx-git-rebase-").tempdir_in("/tmp")?;
+            let helper = temp.path().join("nyx-git-sequence-editor");
             std::os::unix::fs::symlink(editor, &helper)?;
             let plan_path = temp.path().join("plan.json");
             fs::write(&plan_path, serde_json::to_vec(steps)?)?;
             let mut env = env.to_vec();
             env.push(("GIT_SEQUENCE_EDITOR".into(), helper.into_os_string()));
-            env.push(("NIXE_GIT_REBASE_PLAN".into(), plan_path.into_os_string()));
+            env.push(("NYX_GIT_REBASE_PLAN".into(), plan_path.into_os_string()));
             git(root, action.label(), action.args(guard.progress)?, None, &env)
         }
         Action::Squash { base, message } => {
@@ -530,7 +530,7 @@ pub fn recovery(root: &Path) -> Result<Vec<Recovery>> {
             "--sort=-refname",
             "--count=100",
             "--format=%(objectname)%00%(refname)%00%(contents:subject)%00",
-            "refs/nixe/recovery/",
+            "refs/nyx/recovery/",
         ]),
         None,
         &[],
