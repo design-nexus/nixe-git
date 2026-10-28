@@ -14,11 +14,15 @@ thread_local! { static UI: RefCell<Option<Rc<Ui>>> = const { RefCell::new(None) 
 pub fn current() -> Option<Rc<Ui>> {
     UI.with(|u| u.borrow().clone())
 }
-/// Fetch, Pull and Push, shown in both views.
+/// Fetch, Pull and Push, in the header for both views: icons, with the upstream's
+/// counts beside Pull and Push.
 pub struct Sync {
     fetch: gtk::Button,
     pull: gtk::Button,
+    pull_count: gtk::Label,
     push: gtk::Button,
+    push_icon: gtk::Image,
+    push_count: gtk::Label,
     menu: gtk::MenuButton,
 }
 pub struct Ui {
@@ -144,7 +148,7 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     theme::install();
     // Repositories that were moved or deleted drop out of the recent list.
     prefs::update(|p| p.recent.retain(|r| r.exists()));
-    let window = gtk::ApplicationWindow::builder().application(app).title("Git").default_width(1120).default_height(800).build();
+    let window = gtk::ApplicationWindow::builder().application(app).title("Git").default_width(1280).default_height(800).build();
     window.add_css_class("git-window");
     window.set_icon_name(Some("io.github.design_nexus.nyx.Git"));
     window.set_titlebar(Some(&gtk::Box::new(gtk::Orientation::Horizontal, 0)));
@@ -160,7 +164,6 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     let nav = gtk::Box::new(gtk::Orientation::Vertical, 0);
     nav.add_css_class("settings-navigation");
     nav.set_hexpand(false);
-    let head = chrome::sidebar_head("Git", Some("Find commits or changed files (Ctrl+F)"));
     let navigation = gtk::Box::new(gtk::Orientation::Vertical, 0);
     navigation.set_hexpand(false);
     let nav_scroll = gtk::ScrolledWindow::builder()
@@ -170,7 +173,6 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
         .vscrollbar_policy(super::scrollbars::policy())
         .child(&navigation)
         .build();
-    nav.append(&head.root);
     nav.append(&nav_scroll);
 
     let content = gtk::Box::new(gtk::Orientation::Vertical, 0);
@@ -183,33 +185,43 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     let (tab_strip, tabs) = super::workspace::tab_strip();
     content.append(&tab_strip);
     content.append(&chrome::search_strip(&search));
-    let toolbar = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-    toolbar.add_css_class("toolbar");
     let initial = nyx_theme::start_page("history", &prefs::get().last_view);
     let view_switch = widgets::segmented(&widgets::opts(&[("history", "History"), ("changes", "Changes")]), &initial, |id| {
         if let Some(ui) = current() {
             ui.show_view(&id);
         }
     });
-    toolbar.append(&view_switch);
-    let summary = widgets::label("Open a repository", "dim-label");
-    summary.set_hexpand(true);
-    summary.set_margin_start(6);
-    summary.set_ellipsize(gtk::pango::EllipsizeMode::Middle);
-    toolbar.append(&summary);
-    let sync_button = |title: &str, tip: &str, run: fn()| {
-        let b = gtk::Button::with_label(title);
+    view_switch.add_css_class("view-switch");
+    view_switch.set_valign(gtk::Align::Center);
+    let sync_button = |icon: &str, tip: &str, run: fn()| {
+        let b = gtk::Button::new();
+        b.add_css_class("bar-button");
+        b.add_css_class("sync-button");
+        let row = widgets::hbox(4);
+        let image = gtk::Image::from_icon_name(icon);
+        row.append(&image);
+        let count = widgets::label("", "sync-count");
+        count.set_visible(false);
+        row.append(&count);
+        b.set_child(Some(&row));
         b.set_tooltip_text(Some(tip));
         b.set_valign(gtk::Align::Center);
         b.connect_clicked(move |_| run());
-        b
+        (b, image, count)
     };
+    let (fetch, _, _) =
+        sync_button("network-receive-symbolic", "Fetch all remotes (Ctrl+Shift+F)", || run(nyx_git::core::operations::Operation::Fetch));
+    let (pull, _, pull_count) = sync_button("go-down-symbolic", "Fast-forward from the upstream (Ctrl+Shift+L)", || {
+        run(nyx_git::core::operations::Operation::Pull)
+    });
+    let (push_button, push_icon, push_count) = sync_button("go-up-symbolic", "Push to the upstream (Ctrl+Alt+P)", push);
     let sync = Sync {
-        fetch: sync_button("Fetch", "Fetch all remotes (Ctrl+Shift+F)", || run(nyx_git::core::operations::Operation::Fetch)),
-        pull: sync_button("Pull", "Fast-forward from the upstream (Ctrl+Shift+L)", || {
-            run(nyx_git::core::operations::Operation::Pull)
-        }),
-        push: sync_button("Push", "Push to the upstream (Ctrl+Alt+P)", push),
+        fetch,
+        pull,
+        pull_count,
+        push: push_button,
+        push_icon,
+        push_count,
         menu: super::menu_button(
             "open-menu-symbolic",
             None,
@@ -217,13 +229,7 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
             repository_menu,
         ),
     };
-    for b in [&sync.fetch, &sync.pull, &sync.push] {
-        toolbar.append(b);
-    }
-    toolbar.append(&sync.menu);
     let refresh = widgets::bar_button("view-refresh-symbolic", "Refresh status (F5)");
-    toolbar.append(&refresh);
-    content.append(&toolbar);
     let tasks = super::tasks::Tasks::new();
     content.append(&tasks.bar);
 
@@ -367,22 +373,39 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     body.set_vexpand(true);
     body.append(&nav);
     body.append(&content);
-    let bar = gtk::Box::new(gtk::Orientation::Horizontal, 12);
-    bar.add_css_class("status-bar");
-    let help = gtk::Button::with_label("F1  Shortcuts");
-    help.add_css_class("status-help");
-    help.connect_clicked(|_| show_shortcuts());
-    bar.append(&help);
-    let readout = widgets::label("No repository open", "status-readout");
-    readout.set_hexpand(true);
-    readout.set_xalign(1.0);
-    readout.set_ellipsize(gtk::pango::EllipsizeMode::Start);
-    bar.append(&readout);
-    bar.append(&chrome::gear(super::settings::open));
+
+    // ----- Header -----
+    // The app and the repository, the sidebar toggle; History or Changes in the middle;
+    // what's changed, Fetch, Pull, Push, the repository's tools, search, refresh and
+    // Settings at the end.
+    let header = chrome::app_header(&window, "folder-symbolic", "Git");
+    // The repository and branch, after the app's name.
+    let summary = header.subtitle.clone();
+    summary.set_ellipsize(gtk::pango::EllipsizeMode::Middle);
+    summary.set_text("Open a repository");
+    summary.set_visible(true);
+    let collapse = widgets::bar_button("sidebar-show-symbolic", "Collapse the sidebar (Ctrl+B)");
+    collapse.connect_clicked(|_| toggle_sidebar());
+    header.start.append(&collapse);
+    header.center.append(&view_switch);
+    header.end.set_spacing(4);
+    let readout = widgets::label("No repository open", "header-status");
+    readout.set_ellipsize(gtk::pango::EllipsizeMode::End);
+    readout.set_margin_end(6);
+    header.end.append(&readout);
+    for b in [&sync.fetch, &sync.pull, &sync.push] {
+        header.end.append(b);
+    }
+    header.end.append(&sync.menu);
+    let find = widgets::bar_button("system-search-symbolic", "Find commits or filter changed files (Ctrl+F)");
+    find.connect_clicked(|_| show_search());
+    header.end.append(&find);
+    header.end.append(&refresh);
+    header.end.append(&chrome::settings_button(super::settings::open));
     let frame = gtk::Box::new(gtk::Orientation::Vertical, 0);
     frame.add_css_class("window-frame");
+    frame.append(&header.root);
     frame.append(&body);
-    frame.append(&bar);
     let overlay = gtk::Overlay::new();
     overlay.set_child(Some(&frame));
     window.set_child(Some(&overlay));
@@ -478,10 +501,6 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
             ui.refresh();
         }
     });
-    head.toggle.connect_clicked(|_| toggle_sidebar());
-    if let Some(search) = head.search {
-        search.connect_clicked(|_| show_search());
-    }
     let weak = Rc::downgrade(&ui);
     ui.search.connect_search_changed(move |_| {
         if let Some(ui) = weak.upgrade() {
@@ -880,14 +899,27 @@ impl Ui {
         let detached = snapshot.as_ref().is_some_and(|s| s.repository.branch == "Detached HEAD");
         self.sync.fetch.set_sensitive(usable);
         self.sync.pull.set_sensitive(usable && upstream);
-        self.sync.pull.set_label(&if behind > 0 { format!("Pull ↓{behind}") } else { "Pull".into() });
+        self.sync.pull_count.set_text(&format!("{behind}"));
+        self.sync.pull_count.set_visible(behind > 0);
+        self.sync.pull.set_tooltip_text(Some(&if behind > 0 {
+            format!("Pull {behind} commit{} from the upstream (Ctrl+Shift+L)", if behind == 1 { "" } else { "s" })
+        } else {
+            "Fast-forward from the upstream (Ctrl+Shift+L)".into()
+        }));
         self.sync.push.set_sensitive(usable && !unborn && !detached);
         if upstream || unborn || detached {
-            self.sync.push.set_label(&if ahead > 0 { format!("Push ↑{ahead}") } else { "Push".into() });
-            self.sync.push.set_tooltip_text(Some("Push to the upstream (Ctrl+Alt+P)"));
+            self.sync.push_icon.set_icon_name(Some("go-up-symbolic"));
+            self.sync.push_count.set_text(&format!("{ahead}"));
+            self.sync.push_count.set_visible(ahead > 0);
+            self.sync.push.set_tooltip_text(Some(&if ahead > 0 {
+                format!("Push {ahead} commit{} to the upstream (Ctrl+Alt+P)", if ahead == 1 { "" } else { "s" })
+            } else {
+                "Push to the upstream (Ctrl+Alt+P)".into()
+            }));
         } else {
-            self.sync.push.set_label("Publish…");
-            self.sync.push.set_tooltip_text(Some("Push this branch to a remote and track it (Ctrl+Alt+P)"));
+            self.sync.push_icon.set_icon_name(Some("send-to-symbolic"));
+            self.sync.push_count.set_visible(false);
+            self.sync.push.set_tooltip_text(Some("Publish: push this branch to a remote and track it (Ctrl+Alt+P)"));
         }
         self.sync.menu.set_sensitive(snapshot.is_some());
     }
@@ -974,14 +1006,12 @@ impl Ui {
         let width = if self.window.width() > 0 { self.window.width() } else { self.window.default_width() };
         let compact = width < 980 || prefs::get().sidebar_collapsed;
         nyx_ui::settings_card::fit(&self.window);
+        self.readout.set_visible(width >= 980);
         if self.compact.replace(Some(compact)) != Some(compact) {
             if compact {
                 self.nav.add_css_class("compact");
             } else {
                 self.nav.remove_css_class("compact");
-            }
-            if let Some(head) = self.nav.first_child().and_downcast::<gtk::Box>() {
-                chrome::set_head_compact(&head, compact);
             }
             fn walk(widget: &gtk::Widget, compact: bool) {
                 if widget.has_css_class("compact-hide") {

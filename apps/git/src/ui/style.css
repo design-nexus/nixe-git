@@ -1,33 +1,104 @@
-/* Shared Nyx CSS owns the frame, typography, navigation and controls. */
-.git-window .toolbar { min-height: 46px; padding: 0 12px 0 14px; border-bottom: 1px solid @hairline; background: transparent; }
+/* Git on Nyx 2.0: only Git's own parts. One surface: the tabs, the views, the details
+   and the composer share the window's background; spacing, not lines, separates them.
+   The header, navigation and controls come from the shared sheets. */
+
+/* ---------- Header ---------- */
+
+.header-status {
+  font-size: 11.5px;
+  color: @theme_dim_text;
+  font-feature-settings: "tnum";
+}
+
+window.git-window .app-header button.bar-button,
+window.git-window .app-header menubutton.bar-button > button {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: var(--nyx-radius-small);
+  box-shadow: none;
+}
+
+/* Pull and Push carry the upstream's counts beside their icons. */
+window.git-window .app-header button.sync-button {
+  padding: 0 6px;
+}
+
+.sync-count {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: @theme_accent;
+  font-feature-settings: "tnum";
+}
+
+/* History or Changes, at control height in the middle of the header. */
+window.git-window .app-header .view-switch {
+  padding: 2px;
+}
+
+window.git-window .app-header .view-switch button.segment {
+  min-height: 26px;
+  padding: 0 14px;
+}
+
+/* ---------- Views ---------- */
+
+.git-window .toolbar { min-height: 44px; padding: 0 12px 0 14px; background: transparent; }
 .git-files { background: @theme_bg; }
-.git-files row { background: transparent; border-radius: 0; padding: 8px 14px; }
+.git-files row { background: transparent; border-radius: var(--nyx-radius-small); padding: 8px 14px; }
 .git-files row:hover { background: @row_hover; }
 .git-files row:selected { background: @nav_active; }
-.git-details { border-left: 1px solid @hairline; padding: 8px 12px; }
+.git-details { padding: 8px 16px; background: @theme_bg; }
 .git-error { color: @theme_danger; }
-.git-notice { background: @theme_surface; border: 1px solid @hairline; border-radius: 10px; padding: 10px 10px 10px 16px; margin: 12px; }
-.git-notice.error { border-color: alpha(@theme_danger, 0.6); background: mix(@theme_surface, @theme_danger, 0.10); }
-.git-notice button { min-width: 24px; min-height: 24px; padding: 0; }
-.git-actions { padding: 6px 12px; border-bottom: 1px solid @hairline; }
+.git-actions { padding: 6px 12px; }
 .git-actions flowboxchild { padding: 0; }
-.git-composer { padding: 12px; border-top: 1px solid @hairline; }
+.git-composer { padding: 12px 14px 14px; }
 .git-message, .git-message text, .git-diff, .git-diff text { background: @theme_bg; color: @theme_text; font-family: "JetBrains Mono", monospace; }
-.git-message { border: 1px solid @hairline; border-radius: 6px; }
+.git-message, .git-message text { background: @field; }
+.git-message { border-radius: var(--nyx-radius-small); }
 .git-diff border { background: @theme_bg; color: @theme_dim_text; }
-.git-history-search { padding: 6px 12px; border-bottom: 1px solid @hairline; }
+.git-history-search { padding: 6px 12px; }
 .git-history-search dropdown { min-width: 0; }
-.git-history-readout { color: @theme_dim_text; font-size: 0.86em; padding: 6px 12px; border-top: 1px solid @hairline; }
+.git-history-readout { color: @theme_dim_text; font-size: 11.5px; padding: 6px 14px; font-feature-settings: "tnum"; }
 .git-graph { background: @theme_bg; }
 .git-graph:focus { outline: 1px solid alpha(@theme_accent, 0.4); outline-offset: -1px; }
-.git-sidebar-section { border-top: 1px solid @hairline; padding-top: 6px; margin-top: 4px; }
-.git-sidebar-section > title { padding: 6px 4px; color: @theme_dim_text; }
+.git-sidebar-section { padding-top: 6px; margin-top: 10px; }
+.git-sidebar-section > title { padding: 6px 4px; color: @theme_text_tertiary; }
 
-/* Repository tabs reuse the suite document-tab styling. */
+/* Blended: the view and its details meet without a line (the divider still drags). */
+window.git-window paned > separator {
+  min-width: 6px;
+  min-height: 6px;
+  background: @theme_bg;
+  background-image: none;
+  border: none;
+  box-shadow: none;
+}
+
+window.git-window paned > separator:hover {
+  background: alpha(@theme_accent, 0.25);
+}
+
+/* A message over the window: a card that floats, an error tinted. */
+.git-notice {
+  background: @theme_popover;
+  border-radius: var(--nyx-radius-card);
+  padding: 10px 10px 10px 16px;
+  margin: 12px;
+  box-shadow: 0 6px 24px alpha(@theme_shadow, 0.45);
+}
+
+.git-notice.error {
+  background: mix(@theme_popover, @theme_danger, 0.12);
+}
+
+.git-notice button { min-width: 24px; min-height: 24px; padding: 0; }
+
+/* ---------- Repository tabs: a 34 px row of soft pills ---------- */
+
 .git-tabs {
-  min-height: 40px;
+  min-height: 34px;
   padding: 0 8px 0 10px;
-  border-bottom: 1px solid @hairline;
 }
 
 .git-tabs .tabs {
@@ -35,10 +106,10 @@
 }
 
 .doc-tab {
-  margin: 5px 0;
-  border-radius: 6px;
+  margin: 2px 0;
+  border-radius: var(--nyx-radius-small);
   padding: 0 2px 0 0;
-  transition: background 150ms ease-out;
+  transition: background 120ms ease-out;
 }
 
 .doc-tab:hover {
@@ -46,7 +117,7 @@
 }
 
 .doc-tab.active {
-  background: @nav_active;
+  background: alpha(@theme_text, 0.07);
 }
 
 window.git-window .doc-tab button.tab-main {
@@ -60,11 +131,12 @@ window.git-window .doc-tab button.tab-main {
 
 window.git-window .doc-tab.active button.tab-main {
   color: @theme_text;
+  font-weight: 500;
 }
 
 .doc-tab .tab-dirty {
   color: @theme_accent;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 window.git-window .doc-tab button.tab-close {
@@ -92,8 +164,7 @@ window.git-window .doc-tab button.tab-close image {
   -gtk-icon-size: 12px;
 }
 
-
 .git-commit-files { background: transparent; }
-.git-commit-files row { padding: 4px 6px; border-radius: 5px; }
+.git-commit-files row { padding: 4px 6px; border-radius: var(--nyx-radius-small); }
 .git-commit-files row:hover { background: @row_hover; }
 .git-commit-files row:selected { background: @nav_active; color: @theme_text; }

@@ -17,11 +17,15 @@ fn main() -> glib::ExitCode {
         return glib::ExitCode::SUCCESS;
     }
     let application = gtk::Application::builder()
-        .application_id(if std::env::var_os("NYX_GIT_SNAPSHOT").is_some() {
-            "io.github.design_nexus.nyx.Git.Preview"
-        } else {
-            "io.github.design_nexus.nyx.Git"
-        })
+        // Developer aid: NYX_GIT_APP_ID gives a separate test instance (a copy on a virtual
+        // monitor), so it doesn't hand its arguments to the copy that's open.
+        .application_id(std::env::var("NYX_GIT_APP_ID").unwrap_or_else(|_| {
+            if std::env::var_os("NYX_GIT_SNAPSHOT").is_some() {
+                "io.github.design_nexus.nyx.Git.Preview".into()
+            } else {
+                "io.github.design_nexus.nyx.Git".into()
+            }
+        }))
         .flags(gio::ApplicationFlags::HANDLES_COMMAND_LINE)
         .build();
     application.connect_startup(|application| {

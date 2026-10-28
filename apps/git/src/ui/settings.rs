@@ -10,7 +10,7 @@ pub fn open() {
         &ui.window,
         settings_card::Spec {
             groups: &[
-                ("Git window", "preferences-desktop-display-symbolic", "Theme, motion, startup"),
+                ("Git window", "preferences-desktop-display-symbolic", "Theme, accent, motion, startup"),
                 ("Keyboard", "input-keyboard-symbolic", "Shortcuts"),
             ],
             search_text: None,
@@ -79,11 +79,7 @@ fn build() -> (gtk::Widget, gtk::Box) {
         }
     });
     rows.append(&widgets::row("Current colors", "", Some(colors.upcast_ref())));
-    let (row, _) = widgets::switch_row("Glow", "Use the shared theme's glow preference.", p.glow, |on| {
-        prefs::update(|p| p.glow = on);
-        nyx_theme::apply();
-    });
-    rows.append(&row);
+    rows.append(&widgets::accent_row("git"));
     let (row, _) = widgets::switch_row("Reduce motion", "Turn off interface animations.", p.reduce_motion, |on| {
         prefs::update(|p| p.reduce_motion = on);
         nyx_theme::apply();

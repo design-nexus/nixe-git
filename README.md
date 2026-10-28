@@ -44,7 +44,7 @@ and remotes, with a filter and per-repository collapsed-section preferences.
 Click a branch/tag to view ancestry, a stash to inspect it, or a worktree to open it.
 Right-click or Shift+F10 opens actions; switching branches remains explicit.
 F6 focuses the sidebar filter when the sidebar is expanded. The tree hides with the
-compact sidebar, where repository icons remain and the toolbar's repository menu
+compact sidebar, where repository icons remain and the header's repository menu
 reaches every manager.
 Inventory reads run in the background after repository/ref/config changes, not each
 working-file refresh. Each group loads up to 2,000 items and renders at most 100
@@ -102,11 +102,11 @@ hooks/signing leave the message and changes intact. Drafts survive repository
 switches, tab closure and restarts. Git's configuration, hooks, signing, SSH
 agents, askpass and credential helpers remain in use; tokens are not stored here.
 
-**Fetch**, **Pull** and **Push** sit in the toolbar in both views and run in background
+**Fetch**, **Pull** and **Push** sit in the header in both views and run in background
 workers; Pull and Push show how far the branch is behind and ahead, and Push becomes
-**Publish…** for a branch without an upstream. Pull only fast-forwards; diverged
+**Publish** for a branch without an upstream. Pull only fast-forwards; diverged
 histories use an explicit merge/rebase from a commit's context menu. Failures say what
-to do next only when Git's message points at it. The toolbar's repository menu (☰) opens
+to do next only when Git's message points at it. The header's repository menu (☰) opens
 **Branches**, **Stashes**, **Remotes**, **Worktrees**, **Submodules**, **Git LFS**, **Git
 actions…**, **Recovery points…** and **Operation history…**, and opens the folder in a
 file manager, editor or terminal. **Branches**

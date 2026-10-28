@@ -1,5 +1,6 @@
 use crate::prefs;
 pub fn install() {
+    nyx_theme::use_design_2();
     nyx_theme::install(nyx_theme::Style {
         window_class: "git-window",
         base_skip: &[],
