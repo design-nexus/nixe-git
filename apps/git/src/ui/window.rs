@@ -181,10 +181,11 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     content.add_css_class("settings-content");
     let search = gtk::SearchEntry::new();
     search.set_placeholder_text(Some("Filter changed files"));
-    search.set_visible(false);
+    search.add_css_class("bar-search");
+    search.set_width_chars(22);
+    search.set_valign(gtk::Align::Center);
     let (tab_strip, tabs) = super::workspace::tab_strip();
     content.append(&tab_strip);
-    content.append(&chrome::search_strip(&search));
     let initial = nyx_theme::start_page("history", &prefs::get().last_view);
     let view_switch = widgets::segmented(&widgets::opts(&[("history", "History"), ("changes", "Changes")]), &initial, |id| {
         if let Some(ui) = current() {
@@ -364,7 +365,7 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
     split.set_end_child(Some(&detail_scroll));
     split.set_resize_start_child(true);
     split.set_resize_end_child(false);
-    split.set_shrink_start_child(true);
+    split.set_shrink_start_child(false);
     split.set_shrink_end_child(false);
     split.set_position(prefs::get().details_position.max(160));
     split.set_vexpand(true);
@@ -397,9 +398,22 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
         header.end.append(b);
     }
     header.end.append(&sync.menu);
-    let find = widgets::bar_button("system-search-symbolic", "Find commits or filter changed files (Ctrl+F)");
+    // Changes filters its files from the header; History has its own find bar.
+    let find = widgets::bar_button("system-search-symbolic", "Find commits (Ctrl+F)");
     find.connect_clicked(|_| show_search());
+    header.end.append(&search);
     header.end.append(&find);
+    let in_changes = initial == "changes";
+    search.set_visible(in_changes);
+    find.set_visible(!in_changes);
+    {
+        let (search, find) = (search.clone(), find.clone());
+        view_stack.connect_visible_child_name_notify(move |stack| {
+            let changes = stack.visible_child_name().as_deref() == Some("changes");
+            search.set_visible(changes);
+            find.set_visible(!changes);
+        });
+    }
     header.end.append(&refresh);
     header.end.append(&chrome::settings_button(super::settings::open));
     let frame = gtk::Box::new(gtk::Orientation::Vertical, 0);
@@ -513,10 +527,7 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
             ui.filter.changed(gtk::FilterChange::Different);
         }
     });
-    ui.search.connect_stop_search(|search| {
-        search.set_text("");
-        search.set_visible(false);
-    });
+    ui.search.connect_stop_search(|search| search.set_text(""));
     let weak = Rc::downgrade(&ui);
     selection.connect_selected_item_notify(move |_| {
         if let Some(ui) = weak.upgrade()
@@ -586,7 +597,6 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
                         ui.dismiss();
                     } else {
                         ui.search.set_text("");
-                        ui.search.set_visible(false);
                         ui.graph.search.set_text("");
                     }
                 }
@@ -743,9 +753,6 @@ impl Ui {
         self.view_stack.set_visible_child_name(name);
         self.detail_stack.set_visible_child_name(name);
         self.workflow.toolbar.set_visible(name == "changes");
-        if name == "history" {
-            self.search.set_visible(false);
-        }
         let mut button = self.view_switch.first_child();
         while let Some(widget) = button {
             if let Some(toggle) = widget.downcast_ref::<gtk::ToggleButton>() {
@@ -1092,7 +1099,6 @@ fn show_search() {
         if ui.view_stack.visible_child_name().as_deref() == Some("history") {
             ui.graph.focus_search();
         } else {
-            ui.search.set_visible(true);
             ui.search.grab_focus();
         }
     }
