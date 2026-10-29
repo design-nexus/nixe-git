@@ -627,6 +627,27 @@ pub fn present(app: &gtk::Application) -> Rc<Ui> {
         ui.resize();
         glib::ControlFlow::Continue
     });
+    let weak = Rc::downgrade(&ui);
+    let mut last_fetch = std::time::Instant::now();
+    let mut last_interval = prefs::get().fetch_minutes;
+    glib::timeout_add_seconds_local(30, move || {
+        let Some(ui) = weak.upgrade() else { return glib::ControlFlow::Break };
+        let p = prefs::get();
+        if p.fetch_minutes != last_interval {
+            last_interval = p.fetch_minutes;
+            last_fetch = std::time::Instant::now();
+        }
+        if p.fetch_minutes > 0 && last_fetch.elapsed().as_secs() >= p.fetch_minutes.clamp(5, 30) * 60 {
+            last_fetch = std::time::Instant::now();
+            // Wait until current work finishes so periodic fetches cannot pile up.
+            if ui.tasks.active() == 0 {
+                for root in p.workspace.open.into_iter().take(32) {
+                    ui.background_fetch(root);
+                }
+            }
+        }
+        glib::ControlFlow::Continue
+    });
     // Restyle the parts GTK CSS doesn't reach when the theme changes.
     let weak = Rc::downgrade(&ui);
     nyx_theme::subscribe(&ui.window, move || {

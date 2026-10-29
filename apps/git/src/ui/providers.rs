@@ -704,6 +704,10 @@ pub fn clone_dialog(repo: Repository) {
     });
     let path = gtk::Entry::new();
     path.set_placeholder_text(Some("Absolute destination path · must not exist"));
+    let parent = std::path::PathBuf::from(crate::prefs::get().clone_dir);
+    if parent.is_absolute() && parent.is_dir() {
+        path.set_text(&parent.join(repo.name.rsplit('/').next().unwrap_or("repository")).to_string_lossy());
+    }
     body.append(&path);
     let browse = gtk::Button::with_label("Choose parent directory…");
     let d = dialog.clone();
@@ -711,6 +715,8 @@ pub fn clone_dialog(repo: Repository) {
     let name = repo.name.rsplit('/').next().unwrap_or("repository").to_string();
     browse.connect_clicked(move |_| {
         let dialog = gtk::FileDialog::builder().title("Parent directory for the new clone").build();
+        let parent = std::path::PathBuf::from(crate::prefs::get().clone_dir);
+        if parent.is_absolute() && parent.is_dir() { dialog.set_initial_folder(Some(&gio::File::for_path(parent))); }
         let p = p.clone();
         let name = name.clone();
         dialog.select_folder(Some(&d), gio::Cancellable::NONE, move |result| match result {
