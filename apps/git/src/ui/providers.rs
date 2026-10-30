@@ -85,6 +85,7 @@ fn account_link(account: &Account, value: &str) -> anyhow::Result<url::Url> {
 }
 pub fn show() {
     let (dialog, body) = widgets::dialog("Hosting accounts", 680);
+    crate::dialog_dismissal::add(&dialog, &body, "Close");
     note(
         &body,
         "Connect only when you want hosting features. Local Git, SSH agents and Git credential helpers work independently of these accounts.",
@@ -257,6 +258,7 @@ fn repositories(account: Account, page: u32) {
         move |result| match result {
             Ok(result) => {
                 let (dialog, body) = widgets::dialog(&format!("{} repositories · page {page}", a.kind.name()), 760);
+                crate::dialog_dismissal::add(&dialog, &body, "Close");
                 note(&body, &format!("{} · {}", a.username, a.base_url));
                 let search = gtk::SearchEntry::new();
                 search.set_placeholder_text(Some("Filter this page of repositories"));
@@ -343,6 +345,7 @@ fn requests(account: Account, repo: Repository, page: u32, all: bool) {
         move |result| match result {
             Ok(result) => {
                 let (dialog, body) = widgets::dialog(&format!("Requests · {}", repo.name), 760);
+                crate::dialog_dismissal::add(&dialog, &body, "Close");
                 let controls = widgets::hbox(6);
                 let toggle = gtk::Button::with_label(if all { "Show open" } else { "Show all states" });
                 let a2 = a.clone();
@@ -429,6 +432,7 @@ fn request_details(account: Account, repo: Repository, number: u64) {
         move |result| match result {
             Ok(request) => {
                 let (dialog, body) = widgets::dialog(&format!("Request #{}", request.number), 680);
+                crate::dialog_dismissal::add(&dialog, &body, "Close");
                 note(&body, &request.title);
                 note(
                     &body,
@@ -546,6 +550,7 @@ fn issues(account: Account, repo: Repository, page: u32) {
         move |result| match result {
             Ok(result) => {
                 let (dialog, body) = widgets::dialog(&format!("Issues · {}", repo.name), 700);
+                crate::dialog_dismissal::add(&dialog, &body, "Close");
                 let rows = widgets::vbox(0);
                 rows.add_css_class("group-list");
                 if result.items.is_empty() {
@@ -582,6 +587,7 @@ fn issues(account: Account, repo: Repository, page: u32) {
 }
 fn new_request(account: Account, repo: Repository) {
     let (dialog, body) = widgets::dialog("New pull / merge request", 680);
+    crate::dialog_dismissal::add(&dialog, &body, "Cancel");
     note(
         &body,
         &format!(
@@ -684,6 +690,7 @@ fn new_request(account: Account, repo: Repository) {
 }
 pub fn clone_dialog(repo: Repository) {
     let (dialog, body) = widgets::dialog("Clone repository", 660);
+    crate::dialog_dismissal::add(&dialog, &body, "Cancel");
     note(&body, &repo.name);
     let choices = [("SSH · system agent/keys", repo.ssh_url.clone()), ("HTTPS · system Git credentials", repo.https_url.clone())]
         .into_iter()

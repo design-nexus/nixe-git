@@ -24,6 +24,7 @@ pub fn choose() {
         return;
     }
     let (dialog, body) = widgets::dialog("Resolve conflicts", 560);
+    crate::dialog_dismissal::add(&dialog, &body, "Close");
     for file in files {
         let b = gtk::Button::with_label(&file.to_string_lossy());
         let d = dialog.clone();
@@ -62,6 +63,7 @@ fn submit(conflict: Conflict, resolution: Resolution, dialog: &gtk::Window) {
 }
 fn editor(conflict: Conflict) {
     let (dialog, body) = widgets::dialog("Resolve conflict", 800);
+    crate::dialog_dismissal::add(&dialog, &body, "Cancel");
     let note = widgets::label(
         &format!(
             "{}\nOurs = index stage 2; theirs = stage 3. During rebase, ours is the branch being rebased onto, and theirs is the commit being replayed. Saving stages this file; it does not continue the operation.",

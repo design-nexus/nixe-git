@@ -1,3 +1,4 @@
+mod dialog_dismissal;
 mod app;
 mod control;
 mod prefs;

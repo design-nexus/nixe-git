@@ -48,6 +48,7 @@ pub fn branches() {
                 return;
             }
             let (dialog, body) = widgets::dialog("Local branches", 620);
+            crate::dialog_dismissal::add(&dialog, &body, "Close");
             let create = gtk::Button::with_label("Create and switch…");
             create.set_halign(gtk::Align::Start);
             let r = root.clone();
@@ -148,6 +149,7 @@ pub fn stashes() {
                 return;
             }
             let (dialog, body) = widgets::dialog("Stashes", 620);
+            crate::dialog_dismissal::add(&dialog, &body, "Close");
             let save = gtk::Button::with_label("Save working changes…");
             save.set_halign(gtk::Align::Start);
             let r = root.clone();
@@ -211,6 +213,7 @@ pub(super) fn show_stash_diff(root: PathBuf, hash: String) {
         |result| match result {
             Ok(bytes) => {
                 let (dialog, body) = widgets::dialog("Stash diff", 760);
+                crate::dialog_dismissal::add(&dialog, &body, "Close");
                 let diff = Rc::new(super::diff_view::DiffView::new());
                 if bytes.len() <= 2 * 1024 * 1024 {
                     diff.set_text(&String::from_utf8_lossy(&bytes));
@@ -252,6 +255,7 @@ pub fn push_branch(root: PathBuf, branch: String) {
                 return;
             }
             let (dialog, body) = widgets::dialog("Push branch", 480);
+            crate::dialog_dismissal::add(&dialog, &body, "Cancel");
             let label = widgets::label(
                 &format!(
                     "Push {branch} to the selected remote and set it as the upstream. This publishes commits without force pushing."

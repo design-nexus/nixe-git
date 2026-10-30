@@ -70,6 +70,7 @@ pub fn show(target: Option<String>) {
         return;
     };
     let (dialog, body) = widgets::dialog("Advanced Git", 620);
+    crate::dialog_dismissal::add(&dialog, &body, "Cancel");
     let note = widgets::label(
         "Choose a commit, branch or tag. History rewrites retain a recovery reference; uncommitted contents are not backed up.",
         "dim-label",
@@ -312,6 +313,7 @@ pub(super) fn target_action(kind: &'static str, text: String) {
 }
 fn edit_plan(root: PathBuf, base: String, original: Vec<Step>) {
     let (dialog, body) = widgets::dialog("Interactive rebase", 720);
+    crate::dialog_dismissal::add(&dialog, &body, "Cancel");
     let note = widgets::label(
         "Oldest first. Reorder whole lines; replace pick with squash, fixup or drop. Keep every hash exactly once. The first retained commit must be pick. Squash keeps messages; fixup keeps the previous message.",
         "dim-label",
@@ -342,6 +344,7 @@ pub(super) fn recovery() {
         move |result| match result {
             Ok((root, records)) => {
                 let (dialog, body) = widgets::dialog("Recovery points and reflog", 700);
+                crate::dialog_dismissal::add(&dialog, &body, "Close");
                 let rows = gtk::Box::new(gtk::Orientation::Vertical, 0);
                 rows.add_css_class("group-list");
                 for record in records {
